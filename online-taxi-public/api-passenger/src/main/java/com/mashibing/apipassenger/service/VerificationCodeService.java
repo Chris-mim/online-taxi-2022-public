@@ -1,6 +1,7 @@
 package com.mashibing.apipassenger.service;
 
 import com.alibaba.cloud.commons.lang.StringUtils;
+import com.mashibing.apipassenger.remote.ServicePassengerUserClient;
 import com.mashibing.apipassenger.remote.ServiceVerificationcodeClient;
 import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
@@ -20,6 +21,8 @@ public class VerificationCodeService {
     private ServiceVerificationcodeClient serviceVerificationcodeClient;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private ServicePassengerUserClient servicePassengerUserClient;
 
     // 乘客验证码的前缀
     private String verificationCodePrefix = "passenger-verification-code-";
@@ -68,7 +71,7 @@ public class VerificationCodeService {
             return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERR);
         }
         // 判断原来是否有用户，并进行对应的处理
-        System.out.println("判断原来是否有用户，并进行对应的处理");
+        servicePassengerUserClient.loginOrRegister(verificationCodeDTO);
 
         // 颁发令牌
         System.out.println("颁发令牌");
