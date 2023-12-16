@@ -1,6 +1,7 @@
 package com.mashibing.internalcommon.constant;
 
 
+import com.mashibing.internalcommon.response.NumberCodeResponse;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -51,6 +52,15 @@ public class ResponseResult<T> {
      */
     public static ResponseResult fail(int code,String message){
         return new ResponseResult().setCode(code).setMessage(message);
+    }
+
+    /**
+     * 失败：自定义失败 错误码和提示信息
+     * @param statusEnum
+     * @return
+     */
+    public static ResponseResult fail(CommonStatusEnum statusEnum){
+        return new ResponseResult().setCode(statusEnum.getCode()).setMessage(statusEnum.getValue());
     }
 
     /**
