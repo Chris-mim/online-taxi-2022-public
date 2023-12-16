@@ -28,20 +28,30 @@
     <maven.compiler.target>8</maven.compiler.target>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>net.sf.json-lib</groupId>
-      <artifactId>json-lib</artifactId>
-      <version>2.4</version>
-      <classifier>jdk15</classifier>
-    </dependency>
-
+  <dependencyManagement>
     <!-- add nacos 添加哪一版本的Spring cloud https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E-->
-    <dependency>
-      <groupId>com.alibaba.cloud</groupId>
-      <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-      <version>2021.1</version>
-    </dependency>
+    <dependencies>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        <version>2021.1</version>
+        <!-- type属性，依赖的类型，默认为jar，指定pom，可以定义整个pom文件；-->
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>2020.0.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+
 
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -49,5 +59,7 @@
       <version>1.18.24</version>
     </dependency>
   </dependencies>
+
+
 
 </project>
