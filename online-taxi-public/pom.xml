@@ -18,6 +18,7 @@
   <modules>
     <module>api-passenger</module>
     <module>service-verificationcode</module>
+    <module>service-passenger-user</module>
     <module>internal-common</module>
   </modules>
 
@@ -52,6 +53,11 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>com.mashibing</groupId>
+      <artifactId>internal-common</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>

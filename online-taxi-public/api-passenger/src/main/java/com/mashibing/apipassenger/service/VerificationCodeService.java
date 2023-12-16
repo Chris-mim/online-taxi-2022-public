@@ -2,7 +2,7 @@ package com.mashibing.apipassenger.service;
 
 import com.alibaba.cloud.commons.lang.StringUtils;
 import com.mashibing.apipassenger.remote.ServiceVerificationcodeClient;
-import com.mashibing.apipassenger.request.VerificationCodeDTO;
+import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import com.mashibing.internalcommon.constant.ResponseResult;
 import com.mashibing.internalcommon.response.NumberCodeResponse;
@@ -52,7 +52,8 @@ public class VerificationCodeService {
     /**
      * 校验手机号和对于的验证码
      *
-     * @param verificationCodeDTO
+     * @param verificationCodeDTO 封装到一个对象里，固然方便扩展添加参数，但是对于几乎不怎么改动的方法参数仍然没必要强行传对象，
+     *                            或者对于有很多地方调用的，调用起来还要封装一个对象，会不太方便
      * @return
      */
     public ResponseResult checkCode(VerificationCodeDTO verificationCodeDTO) {
