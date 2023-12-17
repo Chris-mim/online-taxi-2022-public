@@ -51,8 +51,8 @@ public class JwtUtils {
     public static TokenResult parseToken(String token){
         DecodedJWT verify = JWT.require(Algorithm.HMAC256(SIGN)).build().verify(token);
         Claim claim = verify.getClaim(JWT_KEY_PHONE);
-        String phone = verify.getClaim(JWT_KEY_PHONE).toString();
-        String identity = verify.getClaim(JWT_KEY_IDENTITY).toString();
+        String phone = verify.getClaim(JWT_KEY_PHONE).asString(); // asString带一个双引号，toString会带两个双引号
+        String identity = verify.getClaim(JWT_KEY_IDENTITY).asString();
 
         TokenResult tokenResult = new TokenResult();
         tokenResult.setPhone(phone);
