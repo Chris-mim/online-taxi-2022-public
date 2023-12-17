@@ -29,6 +29,9 @@ public class VerificationCodeService {
     // 乘客验证码的前缀
     private String verificationCodePrefix = "passenger-verification-code-";
 
+    // token存储的前缀
+    private String tokenPrefix = "token-";
+
     /**
      * 生成验证码
      *
@@ -50,8 +53,25 @@ public class VerificationCodeService {
 
     }
 
+    /**
+     * 根据手机号，生成key
+     *
+     * @param passengerPhone
+     * @return
+     */
     private String getPhoneRedisKey(String passengerPhone) {
         return verificationCodePrefix + passengerPhone;
+    }
+
+    /**
+     * 根据手机号和身份标识，生成token
+     *
+     * @param phone
+     * @param identity
+     * @return
+     */
+    private String generatorTokenKey(String phone, String identity) {
+        return tokenPrefix + phone + "-" + identity;
     }
 
     /**
@@ -77,6 +97,9 @@ public class VerificationCodeService {
 
         // 颁发令牌
         String token = JwtUtils.generatorToken(verificationCodeDTO.getPassengerPhone(), IdentityConstant.PASSENGER_IDENTITY);
+        // 将token存到redis当中
+        String tokenKey = generatorTokenKey(verificationCodeDTO.getPassengerPhone(), IdentityConstant.PASSENGER_IDENTITY);
+        stringRedisTemplate.opsForValue().set(tokenKey, token, 30, TimeUnit.DAYS);
 
         // 响应
         TokenResponse tokenResponse = new TokenResponse();
