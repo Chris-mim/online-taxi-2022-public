@@ -3,11 +3,13 @@ package com.mashibing.apipassenger.service;
 import com.alibaba.cloud.commons.lang.StringUtils;
 import com.mashibing.apipassenger.remote.ServicePassengerUserClient;
 import com.mashibing.apipassenger.remote.ServiceVerificationcodeClient;
+import com.mashibing.internalcommon.constant.IdentityConstant;
 import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import com.mashibing.internalcommon.constant.ResponseResult;
 import com.mashibing.internalcommon.response.NumberCodeResponse;
 import com.mashibing.internalcommon.response.TokenResponse;
+import com.mashibing.internalcommon.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -74,11 +76,11 @@ public class VerificationCodeService {
         servicePassengerUserClient.loginOrRegister(verificationCodeDTO);
 
         // 颁发令牌
-        System.out.println("颁发令牌");
+        String token = JwtUtils.generatorToken(verificationCodeDTO.getPassengerPhone(), IdentityConstant.PASSENGER_IDENTITY);
 
         // 响应
         TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setToken("token value");
+        tokenResponse.setToken(token);
         return ResponseResult.success(tokenResponse);
     }
 }
