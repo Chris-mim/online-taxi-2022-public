@@ -5,6 +5,7 @@ import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.mashibing.internalcommon.constant.ResponseResult;
+import com.mashibing.internalcommon.constant.TokenConstants;
 import com.mashibing.internalcommon.dto.TokenResult;
 import com.mashibing.internalcommon.util.JwtUtils;
 import com.mashibing.internalcommon.util.RedisPrefixUtils;
@@ -48,7 +49,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             result = false;
         }else{
             // 获取token key
-            String tokenRedisKey = RedisPrefixUtils.generatorTokenKey(tokenResult.getPhone(),tokenResult.getIdentity());
+            String tokenRedisKey = RedisPrefixUtils.generatorTokenKey(tokenResult.getPhone(),tokenResult.getIdentity(), TokenConstants.ACCESS_TOKEN_TYPE);
             String tokenRedis = stringRedisTemplate.opsForValue().get(tokenRedisKey);
             // 比较传入的Token和Redis里的Token
             if (!StringUtils.equals(tokenRedis,token)){
