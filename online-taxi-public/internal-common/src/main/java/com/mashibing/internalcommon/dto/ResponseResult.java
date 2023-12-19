@@ -1,7 +1,7 @@
-package com.mashibing.internalcommon.constant;
+package com.mashibing.internalcommon.dto;
 
 
-import com.mashibing.internalcommon.response.NumberCodeResponse;
+import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -1,4 +1,4 @@
-package com.mashibing.servicepassengeruser.dto;
+package com.mashibing.internalcommon.dto;
 
 import lombok.Data;
 

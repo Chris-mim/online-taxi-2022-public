@@ -1,6 +1,6 @@
 package com.mashibing.apipassenger.controller;
 
-import com.mashibing.internalcommon.constant.ResponseResult;
+import com.mashibing.internalcommon.dto.ResponseResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

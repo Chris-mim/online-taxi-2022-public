@@ -1,10 +1,7 @@
 package com.mashibing.apipassenger.interceptor;
 
 import com.alibaba.cloud.commons.lang.StringUtils;
-import com.auth0.jwt.exceptions.AlgorithmMismatchException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.mashibing.internalcommon.constant.ResponseResult;
+import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.constant.TokenConstants;
 import com.mashibing.internalcommon.dto.TokenResult;
 import com.mashibing.internalcommon.util.JwtUtils;

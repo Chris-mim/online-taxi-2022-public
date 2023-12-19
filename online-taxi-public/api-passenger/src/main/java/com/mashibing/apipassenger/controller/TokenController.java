@@ -1,8 +1,7 @@
 package com.mashibing.apipassenger.controller;
 
 import com.mashibing.apipassenger.service.TokenService;
-import com.mashibing.internalcommon.constant.ResponseResult;
-import com.mashibing.internalcommon.request.VerificationCodeDTO;
+import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.response.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

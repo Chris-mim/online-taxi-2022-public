@@ -2,7 +2,7 @@ package com.mashibing.apipassenger.service;
 
 import com.alibaba.cloud.commons.lang.StringUtils;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
-import com.mashibing.internalcommon.constant.ResponseResult;
+import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.constant.TokenConstants;
 import com.mashibing.internalcommon.dto.TokenResult;
 import com.mashibing.internalcommon.response.TokenResponse;

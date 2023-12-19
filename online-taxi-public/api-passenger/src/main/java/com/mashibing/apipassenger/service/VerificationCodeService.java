@@ -7,7 +7,7 @@ import com.mashibing.internalcommon.constant.IdentityConstants;
 import com.mashibing.internalcommon.constant.TokenConstants;
 import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
-import com.mashibing.internalcommon.constant.ResponseResult;
+import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.response.NumberCodeResponse;
 import com.mashibing.internalcommon.response.TokenResponse;
 import com.mashibing.internalcommon.util.JwtUtils;
