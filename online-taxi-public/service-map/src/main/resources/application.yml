@@ -9,3 +9,5 @@ spring:
   application:
     name: service-map
 
+amap:
+  key: e86216c5e908fff38e9b6270a0cb8df0
