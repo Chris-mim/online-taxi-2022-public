@@ -18,7 +18,7 @@ public class DirectionService {
      * @param forecastPriceDTO forecastPriceDTO
      * @return 距离（米）和时长（分钟）
      */
-    public ResponseResult driving(ForecastPriceDTO forecastPriceDTO){
+    public ResponseResult<DirectionResponse> driving(ForecastPriceDTO forecastPriceDTO){
         // 调用地图服务接口
         DirectionResponse direction = mapDirectionClient.direction(forecastPriceDTO);
 
