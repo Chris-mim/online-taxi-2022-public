@@ -11,7 +11,7 @@ public class PriceRule {
 
     private double startFare;
 
-    private int startMile;
+    private double startMile;
 
     private double unitPricePerMile;
 
