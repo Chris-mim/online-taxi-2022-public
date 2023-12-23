@@ -63,7 +63,7 @@ public class ForecastPriceService {
     private static double getPrice(Integer distance, Integer duration, PriceRule priceRule) {
         BigDecimal price = BigDecimal.ZERO;
         // 起步价
-        price = price.add(BigDecimal.valueOf(priceRule.getStartFare()));
+        price = price.add(priceRule.getStartFare());
 
         // 里程价 = 里程公里价 * 大于起步路程的公里数
 
@@ -75,7 +75,7 @@ public class ForecastPriceService {
         BigDecimal mile = distanceMileDecimal.compareTo(BigDecimal.ZERO) > 0 ? distanceMileDecimal : BigDecimal.ZERO;
 
         BigDecimal mileFare = mile
-                .multiply(BigDecimal.valueOf(priceRule.getUnitPricePerMile()))
+                .multiply(priceRule.getUnitPricePerMile())
                 .setScale(2, RoundingMode.HALF_UP);
 
         price = price.add(mileFare);
@@ -83,7 +83,7 @@ public class ForecastPriceService {
         // 时长价 = 每分钟时长价 * 分钟数
 
         BigDecimal timeFare = new BigDecimal(duration)
-                .multiply(BigDecimal.valueOf(priceRule.getUnitPricePerMinute()))
+                .multiply(priceRule.getUnitPricePerMinute())
                 .divide(new BigDecimal(60), 2, RoundingMode.HALF_UP);
         price = price.add(timeFare);
         return price.doubleValue();
