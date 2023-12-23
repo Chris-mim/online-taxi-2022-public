@@ -7,6 +7,11 @@ public class AmapConfigConstants {
     public static final String DIRECTION_URL = "https://restapi.amap.com/v3/direction/driving";
 
     /**
+     * 行政区域查询地址
+     */
+    public static final String DIC_DISTRICT_URL = "https://restapi.amap.com/v3/config/district";
+
+    /**
      * 路径规划 json key值
      */
     public static final String STATUS = "status";
