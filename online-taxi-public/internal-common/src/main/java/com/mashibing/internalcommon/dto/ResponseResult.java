@@ -59,8 +59,8 @@ public class ResponseResult<T> {
      * @param statusEnum
      * @return
      */
-    public static ResponseResult fail(CommonStatusEnum statusEnum){
-        return new ResponseResult().setCode(statusEnum.getCode()).setMessage(statusEnum.getValue());
+    public static <T> ResponseResult<T> fail(CommonStatusEnum statusEnum){
+        return new ResponseResult<T>().setCode(statusEnum.getCode()).setMessage(statusEnum.getValue());
     }
 
     /**
