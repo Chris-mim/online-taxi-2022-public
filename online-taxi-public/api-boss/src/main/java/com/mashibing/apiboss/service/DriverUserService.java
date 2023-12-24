@@ -11,8 +11,22 @@ public class DriverUserService {
 
     @Autowired
     private ServiceDriverUserClient serviceDriverUserClient;
+
+    /**
+     * 添加司机
+     * @param driverUser
+     * @return
+     */
     public ResponseResult addDriverUser(DriverUser driverUser) {
         return serviceDriverUserClient.addUser(driverUser);
     }
 
+    /**
+     * 修改司机
+     * @param driverUser
+     * @return
+     */
+    public ResponseResult updateDriverUser(DriverUser driverUser) {
+        return serviceDriverUserClient.updateUser(driverUser);
+    }
 }
