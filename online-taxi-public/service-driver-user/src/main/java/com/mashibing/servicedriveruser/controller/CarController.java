@@ -1,4 +1,4 @@
-package com.mashibing.serviceDriverUser.controller;
+package com.mashibing.servicedriveruser.controller;
 
 
 import com.mashibing.internalcommon.dto.Car;

@@ -17,7 +17,7 @@ public class MysqlGenerator {
                 .globalConfig(builder -> builder.author("zhangjj").fileOverride().outputDir("E:\\idea workplace\\study\\飞滴出行网约车\\my-github\\online-taxi-2022-public\\online-taxi-public\\service-driver-user\\src\\main\\java"))
                 .packageConfig(builder -> builder.parent("com.mashibing.serviceDriverUser").pathInfo(Collections.singletonMap(OutputFile.mapperXml,
                         "D:\\00-项目\\gitee\\online-taxi-2022-public\\online-taxi-public\\service-driver-user\\src\\main\\java\\com\\mashibing\\serviceDriverUser\\mapper")))
-                .strategyConfig(builder -> builder.addInclude("car"))
+                .strategyConfig(builder -> builder.addInclude("driver_car_binding_relationship"))
                 .templateEngine(new FreemarkerTemplateEngine())
                 .execute();
     }
