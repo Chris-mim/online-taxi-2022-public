@@ -41,7 +41,7 @@ public class VerificationCodeService {
         ResponseResult<NumberCodeResponse> numberCodeResponse = serviceVerificationcodeClient.getNumberCode(6);
         // 存入Redis
         // key,value,过期时间
-        String key = RedisPrefixUtils.getPhoneKey(passengerPhone);
+        String key = RedisPrefixUtils.getPhoneKey(passengerPhone, IdentityConstants.PASSENGER_IDENTITY);
         String numberCode = numberCodeResponse.getData().getNumberCode() + "";
         stringRedisTemplate.opsForValue().set(key, numberCode, 2, TimeUnit.MINUTES);
         // 通过短信服务商，将对应的验证码发送到手机上。阿里短信服务，腾讯短信通，华信，容联
@@ -62,7 +62,7 @@ public class VerificationCodeService {
      */
     public ResponseResult checkCode(VerificationCodeDTO verificationCodeDTO) {
         // 去redis 读取验证码
-        String key = RedisPrefixUtils.getPhoneKey(verificationCodeDTO.getPassengerPhone());
+        String key = RedisPrefixUtils.getPhoneKey(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY);
         String codeRedis = stringRedisTemplate.opsForValue().get(key);
         // 校验验证码
         if (StringUtils.isBlank(codeRedis)) {

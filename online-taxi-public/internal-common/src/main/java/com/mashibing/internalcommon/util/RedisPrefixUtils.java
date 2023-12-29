@@ -3,7 +3,7 @@ package com.mashibing.internalcommon.util;
 public class RedisPrefixUtils {
 
     // 乘客验证码的前缀
-    public static String verificationCodePrefix = "passenger-verification-code-";
+    public static String verificationCodePrefix = "verification-code-";
 
     // token存储的前缀
     public static String tokenPrefix = "token-";
@@ -11,11 +11,11 @@ public class RedisPrefixUtils {
     /**
      * 根据手机号，生成key
      *
-     * @param passengerPhone
+     * @param phone
      * @return
      */
-    public static String getPhoneKey(String passengerPhone) {
-        return verificationCodePrefix + passengerPhone;
+    public static String getPhoneKey(String phone, String identity) {
+        return verificationCodePrefix + phone + "-" + identity ;
     }
 
     /**
