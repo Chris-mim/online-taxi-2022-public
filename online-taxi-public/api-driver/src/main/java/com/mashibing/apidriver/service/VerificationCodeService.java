@@ -1,7 +1,12 @@
 package com.mashibing.apidriver.service;
 
+import com.mashibing.apidriver.remote.ServiceDriverUserClient;
+import com.mashibing.internalcommon.constant.CommonStatusEnum;
+import com.mashibing.internalcommon.constant.DriverCarConstants;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.response.DriverUserExistsResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -9,7 +14,8 @@ import org.springframework.stereotype.Service;
 public class VerificationCodeService {
 
 
-
+    @Autowired
+    private ServiceDriverUserClient serviceDriverUserClient;
 
     /**
      * 生成验证码
@@ -20,7 +26,13 @@ public class VerificationCodeService {
     public ResponseResult generatorCode(String driverPhone) {
         // 1、验证码司机手机号是否存在
         log.info("手机号："+driverPhone);
+        ResponseResult<DriverUserExistsResponse> driverUserExistsResponse = serviceDriverUserClient.getUser(driverPhone);
 
+        DriverUserExistsResponse driverUser = driverUserExistsResponse.getData();
+        if (driverUser.getIfExists() == DriverCarConstants.DRIVER_NOT_EXISTS){
+            return ResponseResult.fail(CommonStatusEnum.DRIVER_NOT_EXISTS);
+        }
+        log.info("司机存在:" + driverPhone);
         // 2、调用验证码服务，获取验证码
 //        ResponseResult<NumberCodeResponse> numberCodeResponse = serviceVerificationcodeClient.getNumberCode(6);
 
