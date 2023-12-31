@@ -7,6 +7,7 @@ import java.util.List;
 @Data
 public class PointRequest {
 
+    private Long carId;
 
     private String tid;
 

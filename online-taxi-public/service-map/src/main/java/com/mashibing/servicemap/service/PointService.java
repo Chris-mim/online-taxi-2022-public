@@ -11,6 +11,12 @@ public class PointService {
 
     @Autowired
     private PointClient pointClient;
+
+    /**
+     * 轨迹点上传
+     * @param pointRequest
+     * @return
+     */
     public ResponseResult upload(PointRequest pointRequest) {
         return pointClient.upload(pointRequest);
     }

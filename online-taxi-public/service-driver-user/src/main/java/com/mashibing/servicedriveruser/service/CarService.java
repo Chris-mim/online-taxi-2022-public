@@ -44,4 +44,9 @@ public class CarService {
         carMapper.insert(car);
         return ResponseResult.success();
     }
+
+    public ResponseResult<Car> getCatById(Long carId) {
+        Car car = carMapper.selectById(carId);
+        return ResponseResult.success(car);
+    }
 }
