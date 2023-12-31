@@ -18,6 +18,10 @@ public class AmapConfigConstants {
      * 创建终端地址
      */
     public static final String TERMINAL_ADD_URL = "https://tsapi.amap.com/v1/track/terminal/add";
+    /**
+     * 创建终端地址
+     */
+    public static final String TRACK_ADD_URL = "https://tsapi.amap.com/v1/track/trace/add";
 
     /**
      * 路径规划 json key值

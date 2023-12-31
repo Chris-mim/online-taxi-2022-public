@@ -28,10 +28,12 @@ public class CarService {
         LocalDateTime now = LocalDateTime.now();
         car.setGmtCreate(now);
         car.setGmtModified(now);
-
+        // 获取车辆的终端id：tid
         ResponseResult<TerminalResponse> terminal = terminalClient.add(car.getVehicleNo());
         String tid = terminal.getData().getTid();
         car.setTid(tid);
+
+        // 获取车辆的轨迹id：trid
 
         carMapper.insert(car);
         return ResponseResult.success();
