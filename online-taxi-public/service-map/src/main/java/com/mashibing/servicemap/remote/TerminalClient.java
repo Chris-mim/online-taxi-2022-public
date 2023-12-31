@@ -23,7 +23,7 @@ public class TerminalClient {
 
 
 
-    public ResponseResult add(String name) {
+    public ResponseResult<TerminalResponse> add(String name) {
 
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(AmapConfigConstants.TERMINAL_ADD_URL);
