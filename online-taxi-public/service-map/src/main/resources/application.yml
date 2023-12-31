@@ -17,3 +17,5 @@ spring:
 
 amap:
   key: e86216c5e908fff38e9b6270a0cb8df0
+  ## 服务id，服务名称：测试2
+  sid: 1012217
