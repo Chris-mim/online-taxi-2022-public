@@ -18,10 +18,11 @@ public class TerminalController {
     /**
      * 创建终端
      * @param name
+     * @param desc
      * @return
      */
     @PostMapping("/add")
-    public ResponseResult add(@RequestParam String name){
-        return service.add(name);
+    public ResponseResult add(@RequestParam String name,@RequestParam String desc){
+        return service.add(name, desc);
     }
 }

@@ -16,7 +16,7 @@ public interface ServiceMapClient {
      * @return
      */
     @PostMapping("/terminal/add")
-    ResponseResult<TerminalResponse> addTerminal(@RequestParam String name);
+    ResponseResult<TerminalResponse> addTerminal(@RequestParam String name, @RequestParam String desc);
 
     /**
      * 根据终端创建轨迹

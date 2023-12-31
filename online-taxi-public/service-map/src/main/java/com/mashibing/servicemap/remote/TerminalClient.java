@@ -23,7 +23,7 @@ public class TerminalClient {
 
 
 
-    public ResponseResult<TerminalResponse> add(String name) {
+    public ResponseResult<TerminalResponse> add(String name, String desc) {
 
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(AmapConfigConstants.TERMINAL_ADD_URL);
@@ -33,6 +33,8 @@ public class TerminalClient {
         urlBuilder.append("sid=" + amapSid);
         urlBuilder.append("&");
         urlBuilder.append("name=" + name);
+        urlBuilder.append("&");
+        urlBuilder.append("desc=" + desc);
 
 
         ResponseEntity<String> entity = restTemplate.postForEntity(urlBuilder.toString(),null, String.class);
