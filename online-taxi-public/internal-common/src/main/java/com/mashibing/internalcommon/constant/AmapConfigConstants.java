@@ -22,6 +22,10 @@ public class AmapConfigConstants {
      * 创建终端地址
      */
     public static final String TRACK_ADD_URL = "https://tsapi.amap.com/v1/track/trace/add";
+    /**
+     * 轨迹点上传（单点、批量）
+     */
+    public static final String POINT_UPLOAD_URL = "https://tsapi.amap.com/v1/track/point/upload";
 
     /**
      * 路径规划 json key值
