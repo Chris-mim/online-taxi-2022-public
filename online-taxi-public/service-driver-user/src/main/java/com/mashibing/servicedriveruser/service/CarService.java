@@ -3,8 +3,9 @@ package com.mashibing.servicedriveruser.service;
 import com.mashibing.internalcommon.dto.Car;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.response.TerminalResponse;
+import com.mashibing.internalcommon.response.TrackResponse;
 import com.mashibing.servicedriveruser.mapper.CarMapper;
-import com.mashibing.servicedriveruser.remote.TerminalClient;
+import com.mashibing.servicedriveruser.remote.ServiceMapClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class CarService {
     private CarMapper carMapper;
 
     @Autowired
-    private TerminalClient terminalClient;
+    private ServiceMapClient terminalClient;
 
     public ResponseResult testGetCar() {
         Car car = carMapper.selectById(new Long(1584359540577861633L));
@@ -29,11 +30,16 @@ public class CarService {
         car.setGmtCreate(now);
         car.setGmtModified(now);
         // 获取车辆的终端id：tid
-        ResponseResult<TerminalResponse> terminal = terminalClient.add(car.getVehicleNo());
+        ResponseResult<TerminalResponse> terminal = terminalClient.addTerminal(car.getVehicleNo());
         String tid = terminal.getData().getTid();
         car.setTid(tid);
 
         // 获取车辆的轨迹id：trid
+        ResponseResult<TrackResponse> track = terminalClient.addTrack(tid);
+        String trid = track.getData().getTrid();
+        String trname = track.getData().getTrname();
+        car.setTrid(trid);
+        car.setTrname(trname);
 
         carMapper.insert(car);
         return ResponseResult.success();
