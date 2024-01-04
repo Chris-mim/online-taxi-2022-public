@@ -23,6 +23,10 @@
     <module>service-price</module>
     <module>service-map</module>
     <module>service-driver-user</module>
+    <module>service-order</module>
+    <module>api-boss</module>
+    <module>api-driver</module>
+    <module>api-passenger</module>
   </modules>
 
   <packaging>pom</packaging>

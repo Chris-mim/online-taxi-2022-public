@@ -21,7 +21,7 @@ public class ResponseResult<T> {
      * @return
      */
     public static <T> ResponseResult success(){
-        return new ResponseResult().setCode(CommonStatusEnum.SUCCESS.getCode()).setMessage(CommonStatusEnum.SUCCESS.getValue());
+        return new ResponseResult().setCode(CommonStatusEnum.SUCCESS.getCode()).setMessage(CommonStatusEnum.SUCCESS.getValue()).setData("");
     }
 
     /**
