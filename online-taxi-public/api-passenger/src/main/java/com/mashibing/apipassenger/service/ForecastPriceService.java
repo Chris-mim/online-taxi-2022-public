@@ -27,6 +27,8 @@ public class ForecastPriceService {
 
         ForecastPriceResponse forecastPriceResponse = new ForecastPriceResponse();
         forecastPriceResponse.setPrice(price);
+        forecastPriceResponse.setCityCode(forecastPriceDTO.getCityCode());
+        forecastPriceResponse.setVehicleType(forecastPriceDTO.getVehicleType());
         return ResponseResult.success(forecastPriceResponse);
     }
 
