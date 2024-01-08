@@ -56,4 +56,14 @@ public class BigDecimalUtils {
         BigDecimal b2 = BigDecimal.valueOf(v2);
         return b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue();
     }
+
+    public static boolean equal(BigDecimal b1, BigDecimal b2){
+        if(b1 == null && b2 == null){
+            return true;
+        }
+        if(b1 == null || b2 == null){
+            return false;
+        }
+        return b1.compareTo(b2) == 0;
+    }
 }
