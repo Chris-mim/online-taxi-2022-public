@@ -41,6 +41,7 @@ public class OrderRequest {
     private Integer encrypt;
     // 运价类型编码
     private String fareType;
+    private Integer fareVersion;
 
 
 }
