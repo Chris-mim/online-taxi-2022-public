@@ -45,6 +45,13 @@ public enum CommonStatusEnum {
     DRIVER_BIND_EXISTS(1503,"司机已经被绑定了，请勿重复绑定"),
 
     CAR_BIND_EXISTS(1504,"车辆已经被绑定了，请勿重复绑定"),
+
+
+    /**
+     * 订单：1600-1699
+     */
+    ORDER_GOING_ON(1600,"有正在进行的订单"),
+
     /**
      * 成功
      */
