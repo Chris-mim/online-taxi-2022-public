@@ -6,15 +6,17 @@ import com.mashibing.internalcommon.constant.OrderConstants;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
+import com.mashibing.internalcommon.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderInfoMapper;
 import com.mashibing.serviceorder.remote.ServicePriceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -33,30 +35,55 @@ public class OrderInfoService {
     @Autowired
     private ServicePriceClient servicePriceClient;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
 
     public ResponseResult add(OrderRequest orderRequest) {
+        // 需要判断 下单的设备是否是 黑名单设备
+        if (isBlackDevice(orderRequest.getDeviceCode())){
+            return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
+        }
+
         // 获取最新计价规则，判断是否有变化
         ResponseResult<Boolean> isNew = servicePriceClient.isNew(orderRequest.getFareType(), orderRequest.getFareVersion());
         if (!isNew.getData()) {
             return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_CHANGED);
         }
-
         if(isOrderGoingOn(orderRequest) > 0){
             return ResponseResult.fail(CommonStatusEnum.ORDER_GOING_ON);
         }
 
-        OrderInfo orderInfo = new OrderInfo();
-        BeanUtils.copyProperties(orderRequest, orderInfo);
+//        OrderInfo orderInfo = new OrderInfo();
+//        BeanUtils.copyProperties(orderRequest, orderInfo);
+//
+//        LocalDateTime now = LocalDateTime.now();
+//        orderInfo.setGmtCreate(now);
+//        orderInfo.setGmtModified(now);
+//        orderInfo.setOrderStatus(OrderConstants.ORDER_START);
+//
+//        orderInfoMapper.insert(orderInfo);
 
-        LocalDateTime now = LocalDateTime.now();
-        orderInfo.setGmtCreate(now);
-        orderInfo.setGmtModified(now);
-        orderInfo.setOrderStatus(OrderConstants.ORDER_START);
-
-        orderInfoMapper.insert(orderInfo);
-        log.info("===============");
         return ResponseResult.success();
 
+    }
+
+    private boolean isBlackDevice(String deviceCode) {
+        String deviceCodeKey = RedisPrefixUtils.generatorBlackDeviceCodeKey(deviceCode);
+        Boolean hasKey = stringRedisTemplate.hasKey(deviceCodeKey);
+        if(hasKey){
+            String keyStr = stringRedisTemplate.opsForValue().get(deviceCodeKey);
+            int count = Integer.parseInt(keyStr);
+            if(count >= 2){
+                // 该设备超过下单次数
+                return true;
+            }else{
+                stringRedisTemplate.opsForValue().increment(deviceCodeKey);
+            }
+        }else{
+            stringRedisTemplate.opsForValue().set(deviceCodeKey,"1",1,TimeUnit.HOURS);
+        }
+        return false;
     }
 
     /**
