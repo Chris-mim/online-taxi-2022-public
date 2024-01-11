@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -42,9 +43,9 @@ public class OrderInfoService {
 
     public ResponseResult add(OrderRequest orderRequest) {
         // 需要判断 下单的设备是否是 黑名单设备
-//        if (isBlackDevice(orderRequest.getDeviceCode())){
-//            return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
-//        }
+        if (isBlackDevice(orderRequest.getDeviceCode())){
+            return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
+        }
         
         // 根据城市编码和车型查询计价规则是否存在
         if (!isPriceRuleExists(orderRequest)) {
@@ -60,15 +61,15 @@ public class OrderInfoService {
             return ResponseResult.fail(CommonStatusEnum.ORDER_GOING_ON);
         }
 
-//        OrderInfo orderInfo = new OrderInfo();
-//        BeanUtils.copyProperties(orderRequest, orderInfo);
-//
-//        LocalDateTime now = LocalDateTime.now();
-//        orderInfo.setGmtCreate(now);
-//        orderInfo.setGmtModified(now);
-//        orderInfo.setOrderStatus(OrderConstants.ORDER_START);
-//
-//        orderInfoMapper.insert(orderInfo);
+        OrderInfo orderInfo = new OrderInfo();
+        BeanUtils.copyProperties(orderRequest, orderInfo);
+
+        LocalDateTime now = LocalDateTime.now();
+        orderInfo.setGmtCreate(now);
+        orderInfo.setGmtModified(now);
+        orderInfo.setOrderStatus(OrderConstants.ORDER_START);
+
+        orderInfoMapper.insert(orderInfo);
 
         return ResponseResult.success();
 
