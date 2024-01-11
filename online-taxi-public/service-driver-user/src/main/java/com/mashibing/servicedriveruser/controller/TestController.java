@@ -1,6 +1,5 @@
 package com.mashibing.servicedriveruser.controller;
 
-import com.mashibing.internalcommon.dto.DriverUser;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.servicedriveruser.mapper.DriverUserMapper;
 import com.mashibing.servicedriveruser.service.DriverUserService;
@@ -23,4 +22,12 @@ public class TestController {
     public ResponseResult testDb(){
         return driverUserService.testGetDriverUser();
     }
+
+    @Autowired
+    private DriverUserMapper driverUserMapper;
+    @GetMapping("/test-xml")
+    public int testXml(){
+        return driverUserMapper.select1();
+    }
+
 }
