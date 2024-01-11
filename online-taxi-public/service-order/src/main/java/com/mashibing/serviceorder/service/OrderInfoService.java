@@ -3,6 +3,7 @@ package com.mashibing.serviceorder.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import com.mashibing.internalcommon.constant.OrderConstants;
+import com.mashibing.internalcommon.dto.PriceRule;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
@@ -41,8 +42,13 @@ public class OrderInfoService {
 
     public ResponseResult add(OrderRequest orderRequest) {
         // 需要判断 下单的设备是否是 黑名单设备
-        if (isBlackDevice(orderRequest.getDeviceCode())){
-            return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
+//        if (isBlackDevice(orderRequest.getDeviceCode())){
+//            return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
+//        }
+        
+        // 根据城市编码和车型查询计价规则是否存在
+        if (!isPriceRuleExists(orderRequest)) {
+            return ResponseResult.fail(CommonStatusEnum.CITY_SERVICE_NOT_SERVICE);
         }
 
         // 获取最新计价规则，判断是否有变化
@@ -66,6 +72,18 @@ public class OrderInfoService {
 
         return ResponseResult.success();
 
+    }
+
+    private Boolean isPriceRuleExists(OrderRequest orderRequest) {
+        String fareType = orderRequest.getFareType();
+        int index = fareType.indexOf("$");
+        String cityCode = fareType.substring(0, index);
+        String vehicleType = fareType.substring(index + 1);
+        PriceRule priceRule = new PriceRule();
+        priceRule.setCityCode(cityCode);
+        priceRule.setVehicleType(vehicleType);
+        ResponseResult<Boolean> booleanResponseResult = this.servicePriceClient.ifPriceExists(priceRule);
+        return booleanResponseResult.getData();
     }
 
     private boolean isBlackDevice(String deviceCode) {

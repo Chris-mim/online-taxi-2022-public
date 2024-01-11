@@ -25,6 +25,15 @@
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
+        <!--用于远程调用:
+        	被调用对象是GET请求，
+			远程调用方法的method也是GET方法，但是形参中使用了@ResponseBody注解，且此注解默认使用POST方法
+			这个依赖就是用于将POST改成GET请求的-->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+        </dependency>
+
         <!--mybatis-plus-->
         <dependency>
             <groupId>com.baomidou</groupId>
