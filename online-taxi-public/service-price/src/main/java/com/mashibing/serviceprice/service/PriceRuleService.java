@@ -114,4 +114,14 @@ public class PriceRuleService {
         }
 
     }
+
+    public ResponseResult<Boolean> ifExists(PriceRule priceRule) {
+        QueryWrapper<PriceRule> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("city_code",priceRule.getCityCode());
+        queryWrapper.eq("vehicle_type",priceRule.getVehicleType());
+
+        Integer count = priceRuleMapper.selectCount(queryWrapper);
+
+        return ResponseResult.success(count > 0);
+    }
 }
