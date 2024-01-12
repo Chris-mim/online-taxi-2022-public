@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DriverUserMapper extends BaseMapper<DriverUser> {
-    int select1(@Param("cityCode") String cityCode);
+    int selectAvailableDriverCount(@Param("cityCode") String cityCode);
+
 }

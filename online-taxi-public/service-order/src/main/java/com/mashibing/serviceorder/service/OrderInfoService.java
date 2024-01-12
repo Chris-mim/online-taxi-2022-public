@@ -9,6 +9,7 @@ import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
 import com.mashibing.internalcommon.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderInfoMapper;
+import com.mashibing.serviceorder.remote.ServiceDriverUserClient;
 import com.mashibing.serviceorder.remote.ServicePriceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +37,8 @@ public class OrderInfoService {
     private OrderInfoMapper orderInfoMapper;
     @Autowired
     private ServicePriceClient servicePriceClient;
+    @Autowired
+    private ServiceDriverUserClient serviceDriverUserClient;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -46,7 +49,14 @@ public class OrderInfoService {
         if (isBlackDevice(orderRequest.getDeviceCode())){
             return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
         }
-        
+
+        // 判断当前城市的司机是否可用
+        ResponseResult<Boolean> isAvailableDriver = serviceDriverUserClient.isAvailableDriver(orderRequest.getAddress());
+        log.info("测试城市是否有司机结果："+isAvailableDriver.getData());
+        if (!isAvailableDriver.getData()) {
+            return ResponseResult.fail(CommonStatusEnum.CITY_DRIVER_EMPTY);
+        }
+
         // 根据城市编码和车型查询计价规则是否存在
         if (!isPriceRuleExists(orderRequest)) {
             return ResponseResult.fail(CommonStatusEnum.CITY_SERVICE_NOT_SERVICE);
