@@ -26,8 +26,8 @@ public class TestController {
     @Autowired
     private DriverUserMapper driverUserMapper;
     @GetMapping("/test-xml")
-    public int testXml(){
-        return driverUserMapper.select1();
+    public int testXml(String cityCode){
+        return driverUserMapper.select1(cityCode);
     }
 
 }
