@@ -17,7 +17,7 @@
                 INNER JOIN driver_user USER ON rel.driver_id = USER.id
         WHERE
             rel.bind_state = #{bindState}
-          AND rel.car_id =  #{carId}
+          AND rel.car_id =  #{carId} limit 1
     </select>
 
 </mapper>
