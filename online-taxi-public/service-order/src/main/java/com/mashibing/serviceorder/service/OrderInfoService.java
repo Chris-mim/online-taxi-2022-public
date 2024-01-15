@@ -7,6 +7,7 @@ import com.mashibing.internalcommon.dto.PriceRule;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
+import com.mashibing.internalcommon.response.OrderDriverResponse;
 import com.mashibing.internalcommon.response.TerminalResponse;
 import com.mashibing.internalcommon.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderInfoMapper;
@@ -53,13 +54,13 @@ public class OrderInfoService {
 
     public ResponseResult add(OrderRequest orderRequest) {
         // 需要判断 下单的设备是否是 黑名单设备
-        if (isBlackDevice(orderRequest.getDeviceCode())){
+        if (isBlackDevice(orderRequest.getDeviceCode())) {
             return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
         }
 
         // 判断当前城市的司机是否可用
         ResponseResult<Boolean> isAvailableDriver = serviceDriverUserClient.isAvailableDriver(orderRequest.getAddress());
-        log.info("测试城市是否有司机结果："+isAvailableDriver.getData());
+        log.info("测试城市是否有司机结果：" + isAvailableDriver.getData());
         if (!isAvailableDriver.getData()) {
             return ResponseResult.fail(CommonStatusEnum.CITY_DRIVER_EMPTY);
         }
@@ -74,7 +75,7 @@ public class OrderInfoService {
         if (!isNew.getData()) {
             return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_CHANGED);
         }
-        if(isOrderGoingOn(orderRequest) > 0){
+        if (isOrderGoingOn(orderRequest) > 0) {
             return ResponseResult.fail(CommonStatusEnum.ORDER_GOING_ON);
         }
 
@@ -96,6 +97,7 @@ public class OrderInfoService {
 
     /**
      * 调用终端周边搜索接口，派发司机车辆订单
+     *
      * @param orderInfo
      */
     public void dispatchRealTimeOrder(OrderInfo orderInfo) {
@@ -104,17 +106,31 @@ public class OrderInfoService {
         radiusList.add(2000);
         radiusList.add(4000);
         radiusList.add(5000);
-        String center = orderInfo.getDepLatitude()+","+orderInfo.getDepLongitude();
+        String center = orderInfo.getDepLatitude() + "," + orderInfo.getDepLongitude();
 
-        for(int i = 0; i < radiusList.size(); i ++){
+        radius:
+        for (int i = 0; i < radiusList.size(); i++) {
             Integer radius = radiusList.get(i);
             ResponseResult<List<TerminalResponse>> responseResult = serviceMapClient.aroundSearch(center, radius);
-            log.info("在半径为"+radius+"的范围内，寻找车辆,结果："+ JSONArray.fromObject(responseResult.getData()).toString());
+            log.info("在半径为" + radius + "的范围内，寻找车辆,结果：" + JSONArray.fromObject(responseResult.getData()).toString());
             // 获得终端
-
-            // 解析终端
+            List<TerminalResponse> terminalResponses = responseResult.getData();
 
             // 根据解析出来的终端，查询车辆信息
+            for (int j = 0; j < terminalResponses.size(); j++) {
+                Long carId = terminalResponses.get(i).getCarId();
+                // 查询是否有对于的可派单司机
+                ResponseResult<OrderDriverResponse> availableDriver = serviceDriverUserClient.getAvailableDriver(carId);
+                if (availableDriver.getCode() == CommonStatusEnum.AVAILABLE_DRIVER_EMPTY.getCode()) {
+                    log.info("没有车辆ID：" + carId + ",对于的司机");
+                    continue radius;
+                } else {
+                    log.info("车辆ID：" + carId + "找到了正在出车的司机");
+                    // 跳出最外层循环
+                    break radius;
+                }
+
+            }
 
             // 找到符合的车辆，进行派单
 
@@ -138,23 +154,24 @@ public class OrderInfoService {
     private boolean isBlackDevice(String deviceCode) {
         String deviceCodeKey = RedisPrefixUtils.generatorBlackDeviceCodeKey(deviceCode);
         Boolean hasKey = stringRedisTemplate.hasKey(deviceCodeKey);
-        if(hasKey){
+        if (hasKey) {
             String keyStr = stringRedisTemplate.opsForValue().get(deviceCodeKey);
             int count = Integer.parseInt(keyStr);
-            if(count >= 2){
+            if (count >= 2) {
                 // 该设备超过下单次数
                 return true;
-            }else{
+            } else {
                 stringRedisTemplate.opsForValue().increment(deviceCodeKey);
             }
-        }else{
-            stringRedisTemplate.opsForValue().set(deviceCodeKey,"1",1,TimeUnit.HOURS);
+        } else {
+            stringRedisTemplate.opsForValue().set(deviceCodeKey, "1", 1, TimeUnit.HOURS);
         }
         return false;
     }
 
     /**
      * 校验乘客是否存在正在进行的订单
+     *
      * @param orderRequest
      * @return
      */

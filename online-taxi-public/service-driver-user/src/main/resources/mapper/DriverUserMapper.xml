@@ -8,4 +8,16 @@
         select count(*) from v_city_driver_user_work_status where city_code = #{cityCode}
     </select>
 
+    <select id="selectOneAvailableDriver" parameterType="java.lang.Long" resultType="com.mashibing.internalcommon.response.OrderDriverResponse">
+        SELECT USER.driver_phone,
+               rel.driver_id,
+               rel.car_id
+        FROM
+            driver_car_binding_relationship rel
+                INNER JOIN driver_user USER ON rel.driver_id = USER.id
+        WHERE
+            rel.bind_state = #{bindState}
+          AND rel.car_id =  #{carId}
+    </select>
+
 </mapper>

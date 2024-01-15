@@ -16,9 +16,14 @@ spring:
         server-addr: 127.0.0.1:8848
 
 mybatis-plus:
+  # xml路径
   mapper-locations: classpath:mapper/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 是否开启驼峰
+    map-underscore-to-camel-case: true
+    # map 映射value为null的情况
+    call-setters-on-nulls: true
 logging:
   level:
     com.baomidou.mybatisplus: debug

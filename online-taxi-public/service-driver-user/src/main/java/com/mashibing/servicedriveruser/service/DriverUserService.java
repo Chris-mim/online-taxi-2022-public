@@ -1,9 +1,11 @@
 package com.mashibing.servicedriveruser.service;
 
+import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import com.mashibing.internalcommon.constant.DriverCarConstants;
 import com.mashibing.internalcommon.dto.DriverUser;
 import com.mashibing.internalcommon.dto.DriverUserWorkStatus;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.response.OrderDriverResponse;
 import com.mashibing.servicedriveruser.mapper.DriverUserMapper;
 import com.mashibing.servicedriveruser.mapper.DriverUserWorkStatusMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +59,17 @@ public class DriverUserService {
             return null;
         }
         return driverUsers.get(0);
+    }
+    /**
+     * 根据车辆Id查询订单需要的司机信息
+     * @param carId
+     * @return
+     */
+    public ResponseResult<OrderDriverResponse> getAvailableDriver(Long carId) {
+        OrderDriverResponse driverUser = driverUserMapper.selectOneAvailableDriver(carId, (long)DriverCarConstants.DRIVER_CAR_BIND);
+        if(driverUser == null){
+            return ResponseResult.fail(CommonStatusEnum.AVAILABLE_DRIVER_EMPTY);
+        }
+        return ResponseResult.success(driverUser);
     }
 }
