@@ -7,18 +7,23 @@ import com.mashibing.internalcommon.dto.PriceRule;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
+import com.mashibing.internalcommon.response.TerminalResponse;
 import com.mashibing.internalcommon.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderInfoMapper;
 import com.mashibing.serviceorder.remote.ServiceDriverUserClient;
+import com.mashibing.serviceorder.remote.ServiceMapClient;
 import com.mashibing.serviceorder.remote.ServicePriceClient;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,6 +44,8 @@ public class OrderInfoService {
     private ServicePriceClient servicePriceClient;
     @Autowired
     private ServiceDriverUserClient serviceDriverUserClient;
+    @Autowired
+    private ServiceMapClient serviceMapClient;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -81,8 +88,39 @@ public class OrderInfoService {
 
         orderInfoMapper.insert(orderInfo);
 
+        // 派单 dispatchRealTimeOrder
+        dispatchRealTimeOrder(orderInfo);
         return ResponseResult.success();
 
+    }
+
+    /**
+     * 调用终端周边搜索接口，派发司机车辆订单
+     * @param orderInfo
+     */
+    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
+        //
+        List<Integer> radiusList = new ArrayList<>();
+        radiusList.add(2000);
+        radiusList.add(4000);
+        radiusList.add(5000);
+        String center = orderInfo.getDepLatitude()+","+orderInfo.getDepLongitude();
+
+        for(int i = 0; i < radiusList.size(); i ++){
+            Integer radius = radiusList.get(i);
+            ResponseResult<List<TerminalResponse>> responseResult = serviceMapClient.aroundSearch(center, radius);
+            log.info("在半径为"+radius+"的范围内，寻找车辆,结果："+ JSONArray.fromObject(responseResult.getData()).toString());
+            // 获得终端
+
+            // 解析终端
+
+            // 根据解析出来的终端，查询车辆信息
+
+            // 找到符合的车辆，进行派单
+
+            // 如果派单成功，则退出循环
+
+        }
     }
 
     private Boolean isPriceRuleExists(OrderRequest orderRequest) {

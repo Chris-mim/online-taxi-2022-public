@@ -1,14 +1,13 @@
 package com.mashibing.serviceorder.controller;
 
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
+import com.mashibing.serviceorder.mapper.OrderInfoMapper;
 import com.mashibing.serviceorder.service.OrderInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,4 +33,12 @@ public class OrderInfoController {
     }
 
 
+    @Autowired
+    private OrderInfoMapper orderInfoMapper;
+    @GetMapping("/test-dispatch-real-time-order")
+    public String dispatchRealTimeOrder(Long orderId){
+        OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
+        orderInfoService.dispatchRealTimeOrder(orderInfo);
+        return "dispatch-real-time-order";
+    }
 }
