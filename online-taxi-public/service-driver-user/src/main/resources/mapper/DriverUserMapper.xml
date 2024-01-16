@@ -9,15 +9,19 @@
     </select>
 
     <select id="selectOneAvailableDriver" parameterType="java.lang.Long" resultType="com.mashibing.internalcommon.response.OrderDriverResponse">
-        SELECT USER.driver_phone,
+        SELECT user.driver_phone,
                rel.driver_id,
-               rel.car_id
+               rel.car_id,
+               user.license_id,
+               car.vehicle_no
         FROM
             driver_car_binding_relationship rel
-                INNER JOIN driver_user USER ON rel.driver_id = USER.id
+            INNER JOIN driver_user user ON rel.driver_id = USER.id
+            INNER JOIN car ON car.id = rel.car_id
         WHERE
             rel.bind_state = #{bindState}
-          AND rel.car_id =  #{carId} limit 1
+          AND rel.car_id =  #{carId}
+            LIMIT 1
     </select>
 
 </mapper>

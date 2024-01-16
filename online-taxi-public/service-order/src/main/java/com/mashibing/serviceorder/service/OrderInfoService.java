@@ -118,7 +118,8 @@ public class OrderInfoService {
 
             // 根据解析出来的终端，查询车辆信息
             for (int j = 0; j < terminalResponses.size(); j++) {
-                Long carId = terminalResponses.get(j).getCarId();
+                TerminalResponse terminalResponse = terminalResponses.get(j);
+                Long carId = terminalResponse.getCarId();
                 // 查询是否有对于的可派单司机
                 ResponseResult<OrderDriverResponse> availableDriver = serviceDriverUserClient.getAvailableDriver(carId);
                 if (availableDriver.getCode() == CommonStatusEnum.AVAILABLE_DRIVER_EMPTY.getCode()) {
@@ -127,8 +128,9 @@ public class OrderInfoService {
                     continue;
                 } else {
                     log.info("车辆ID：" + carId + "找到了正在出车的司机");
+                    OrderDriverResponse driverResponse = availableDriver.getData();
                     // 判断司机是否有正在进行的订单
-                    Long driverId = availableDriver.getData().getDriverId();
+                    Long driverId = driverResponse.getDriverId();
                     // 有接着遍历下一个
                     if(isDriverOrderGoingOn(driverId)){
                         log.info("司机有正在处理的订单");
@@ -137,7 +139,19 @@ public class OrderInfoService {
 
                     // 匹配订单和司机
 
+                    orderInfo.setDriverId(driverId);
+                    orderInfo.setDriverPhone(driverResponse.getDriverPhone());
+                    orderInfo.setCarId(carId);
+                    // 从地图中来 接订单的经纬度
+                    orderInfo.setReceiveOrderCarLongitude(terminalResponse.getLongitude());
+                    orderInfo.setReceiveOrderCarLatitude(terminalResponse.getLatitude());
 
+                    orderInfo.setReceiveOrderTime(LocalDateTime.now());
+                    orderInfo.setLicenseId(driverResponse.getLicenseId());
+                    orderInfo.setVehicleNo(driverResponse.getVehicleNo());
+                    orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
+
+                    orderInfoMapper.updateById(orderInfo);
 
 
                     // 跳出最外层循环
