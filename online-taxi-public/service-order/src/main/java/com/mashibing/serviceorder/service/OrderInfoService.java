@@ -100,8 +100,13 @@ public class OrderInfoService {
      *
      * @param orderInfo
      */
-    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
-        //
+    public synchronized void dispatchRealTimeOrder(OrderInfo orderInfo) {
+        // 因为方法执行时间太短，使用synchronized无法复现集群并发问题，所以加长方法执行时间，成功复现
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         List<Integer> radiusList = new ArrayList<>();
         radiusList.add(2000);
         radiusList.add(4000);

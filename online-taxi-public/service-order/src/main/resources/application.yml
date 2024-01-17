@@ -1,5 +1,5 @@
-server:
-  port: 8089
+#server:
+#  port: 8089
 
 spring:
   cloud:
@@ -25,3 +25,15 @@ logging:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+---
+
+spring:
+  profiles: 8089
+server:
+  port: 8089
+---
+spring:
+  profiles: 8090
+server:
+  port: 8090
