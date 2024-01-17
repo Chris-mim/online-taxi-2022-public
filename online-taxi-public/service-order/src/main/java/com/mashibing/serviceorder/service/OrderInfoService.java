@@ -100,7 +100,7 @@ public class OrderInfoService {
      *
      * @param orderInfo
      */
-    public synchronized void dispatchRealTimeOrder(OrderInfo orderInfo) {
+    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
         //
         List<Integer> radiusList = new ArrayList<>();
         radiusList.add(2000);
@@ -131,27 +131,31 @@ public class OrderInfoService {
                     OrderDriverResponse driverResponse = availableDriver.getData();
                     // 判断司机是否有正在进行的订单
                     Long driverId = driverResponse.getDriverId();
-                    // 有接着遍历下一个
-                    if(isDriverOrderGoingOn(driverId)){
-                        log.info("司机有正在处理的订单");
-                        continue;
+                    // 锁司机ID小技巧:如果driverId在常量池内没有，则放入常量池 如果driverId字符串在常量池有则返回常量池里的地址，这里就锁住了同一个地址
+                    synchronized ((driverId+"").intern()){
+                        // 有接着遍历下一个
+                        if(isDriverOrderGoingOn(driverId)){
+                            log.info("司机有正在处理的订单");
+                            continue;
+                        }
+
+                        // 匹配订单和司机
+
+                        orderInfo.setDriverId(driverId);
+                        orderInfo.setDriverPhone(driverResponse.getDriverPhone());
+                        orderInfo.setCarId(carId);
+                        // 从地图中来 接订单的经纬度
+                        orderInfo.setReceiveOrderCarLongitude(terminalResponse.getLongitude());
+                        orderInfo.setReceiveOrderCarLatitude(terminalResponse.getLatitude());
+
+                        orderInfo.setReceiveOrderTime(LocalDateTime.now());
+                        orderInfo.setLicenseId(driverResponse.getLicenseId());
+                        orderInfo.setVehicleNo(driverResponse.getVehicleNo());
+                        orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
+
+                        orderInfoMapper.updateById(orderInfo);
                     }
 
-                    // 匹配订单和司机
-
-                    orderInfo.setDriverId(driverId);
-                    orderInfo.setDriverPhone(driverResponse.getDriverPhone());
-                    orderInfo.setCarId(carId);
-                    // 从地图中来 接订单的经纬度
-                    orderInfo.setReceiveOrderCarLongitude(terminalResponse.getLongitude());
-                    orderInfo.setReceiveOrderCarLatitude(terminalResponse.getLatitude());
-
-                    orderInfo.setReceiveOrderTime(LocalDateTime.now());
-                    orderInfo.setLicenseId(driverResponse.getLicenseId());
-                    orderInfo.setVehicleNo(driverResponse.getVehicleNo());
-                    orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
-
-                    orderInfoMapper.updateById(orderInfo);
 
 
                     // 跳出最外层循环
