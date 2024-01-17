@@ -16,6 +16,8 @@ import com.mashibing.serviceorder.remote.ServiceMapClient;
 import com.mashibing.serviceorder.remote.ServicePriceClient;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -95,18 +97,21 @@ public class OrderInfoService {
 
     }
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     /**
      * 调用终端周边搜索接口，派发司机车辆订单
      *
      * @param orderInfo
      */
-    public synchronized void dispatchRealTimeOrder(OrderInfo orderInfo) {
-        // 因为方法执行时间太短，使用synchronized无法复现集群并发问题，所以加长方法执行时间，成功复现
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
+//        // 因为方法执行时间太短，使用synchronized无法复现集群并发问题，所以加长方法执行时间，成功复现
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         List<Integer> radiusList = new ArrayList<>();
         radiusList.add(2000);
         radiusList.add(4000);
@@ -136,32 +141,37 @@ public class OrderInfoService {
                     OrderDriverResponse driverResponse = availableDriver.getData();
                     // 判断司机是否有正在进行的订单
                     Long driverId = driverResponse.getDriverId();
-                    // 锁司机ID小技巧:如果driverId在常量池内没有，则放入常量池 如果driverId字符串在常量池有则返回常量池里的地址，这里就锁住了同一个地址
-                    synchronized ((driverId+"").intern()){
-                        // 有接着遍历下一个
-                        if(isDriverOrderGoingOn(driverId)){
-                            log.info("司机有正在处理的订单");
-                            continue;
-                        }
+                    // 单机锁司机ID小技巧:如果driverId在常量池内没有，则放入常量池 如果driverId字符串在常量池有则返回常量池里的地址，这里就锁住了同一个地址
+//                    synchronized ((driverId+"").intern()){
+                    String lockKey = driverId+"";
+                    RLock lock = redissonClient.getLock(lockKey);
 
-                        // 匹配订单和司机
-
-                        orderInfo.setDriverId(driverId);
-                        orderInfo.setDriverPhone(driverResponse.getDriverPhone());
-                        orderInfo.setCarId(carId);
-                        // 从地图中来 接订单的经纬度
-                        orderInfo.setReceiveOrderCarLongitude(terminalResponse.getLongitude());
-                        orderInfo.setReceiveOrderCarLatitude(terminalResponse.getLatitude());
-
-                        orderInfo.setReceiveOrderTime(LocalDateTime.now());
-                        orderInfo.setLicenseId(driverResponse.getLicenseId());
-                        orderInfo.setVehicleNo(driverResponse.getVehicleNo());
-                        orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
-
-                        orderInfoMapper.updateById(orderInfo);
+                    lock.lock();
+                    // 有接着遍历下一个
+                    if (isDriverOrderGoingOn(driverId)) {
+                        lock.unlock();
+                        log.info("司机有正在处理的订单");
+                        continue;
                     }
 
+                    // 匹配订单和司机
 
+                    orderInfo.setDriverId(driverId);
+                    orderInfo.setDriverPhone(driverResponse.getDriverPhone());
+                    orderInfo.setCarId(carId);
+                    // 从地图中来 接订单的经纬度
+                    orderInfo.setReceiveOrderCarLongitude(terminalResponse.getLongitude());
+                    orderInfo.setReceiveOrderCarLatitude(terminalResponse.getLatitude());
+
+                    orderInfo.setReceiveOrderTime(LocalDateTime.now());
+                    orderInfo.setLicenseId(driverResponse.getLicenseId());
+                    orderInfo.setVehicleNo(driverResponse.getVehicleNo());
+                    orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
+
+                    orderInfoMapper.updateById(orderInfo);
+//                    }
+
+                    lock.unlock();
 
                     // 跳出最外层循环
                     break radius;
@@ -227,6 +237,7 @@ public class OrderInfoService {
                 ));
         return orderInfoMapper.selectCount(queryWrapper) > 0;
     }
+
     /**
      * 校验司机是否存在正在进行的订单
      *
