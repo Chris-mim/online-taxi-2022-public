@@ -37,6 +37,7 @@ public class OrderInfoController {
     private OrderInfoMapper orderInfoMapper;
     @GetMapping("/test-dispatch-real-time-order")
     public String dispatchRealTimeOrder(Long orderId){
+        log.info("并发测试 orderId："+orderId);
         OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
         orderInfoService.dispatchRealTimeOrder(orderInfo);
         return "dispatch-real-time-order";
