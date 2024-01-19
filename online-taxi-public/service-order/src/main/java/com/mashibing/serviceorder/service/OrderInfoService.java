@@ -2,6 +2,7 @@ package com.mashibing.serviceorder.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
+import com.mashibing.internalcommon.constant.IdentityConstants;
 import com.mashibing.internalcommon.constant.OrderConstants;
 import com.mashibing.internalcommon.dto.PriceRule;
 import com.mashibing.internalcommon.dto.ResponseResult;
@@ -14,8 +15,10 @@ import com.mashibing.serviceorder.mapper.OrderInfoMapper;
 import com.mashibing.serviceorder.remote.ServiceDriverUserClient;
 import com.mashibing.serviceorder.remote.ServiceMapClient;
 import com.mashibing.serviceorder.remote.ServicePriceClient;
+import com.mashibing.serviceorder.remote.ServiceSsePushClient;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
@@ -49,6 +52,8 @@ public class OrderInfoService {
     private ServiceDriverUserClient serviceDriverUserClient;
     @Autowired
     private ServiceMapClient serviceMapClient;
+    @Autowired
+    private ServiceSsePushClient serviceSsePushClient;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -143,7 +148,7 @@ public class OrderInfoService {
                     Long driverId = driverResponse.getDriverId();
                     // 单机锁司机ID小技巧:如果driverId在常量池内没有，则放入常量池 如果driverId字符串在常量池有则返回常量池里的地址，这里就锁住了同一个地址
 //                    synchronized ((driverId+"").intern()){
-                    String lockKey = driverId+"";
+                    String lockKey = driverId + "";
                     RLock lock = redissonClient.getLock(lockKey);
 
                     lock.lock();
@@ -170,6 +175,19 @@ public class OrderInfoService {
 
                     orderInfoMapper.updateById(orderInfo);
 //                    }
+
+                    // 给司机发送消息
+                    JSONObject driverContent = new JSONObject();
+                    driverContent.put("passengerId", orderInfo.getPassengerId());
+                    driverContent.put("passengerPhone", orderInfo.getPassengerPhone());
+                    driverContent.put("departure", orderInfo.getDeparture());
+                    driverContent.put("depLongitude", orderInfo.getDepLongitude());
+                    driverContent.put("depLatitude", orderInfo.getDepLatitude());
+
+                    driverContent.put("destination", orderInfo.getDestination());
+                    driverContent.put("destLongitude", orderInfo.getDestLongitude());
+                    driverContent.put("destLatitude", orderInfo.getDestLatitude());
+                    serviceSsePushClient.push(driverId, IdentityConstants.DRIVER_IDENTITY, driverContent.toString());
 
                     lock.unlock();
 
