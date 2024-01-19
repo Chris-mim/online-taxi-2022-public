@@ -27,7 +27,7 @@
     <module>api-boss</module>
     <module>api-driver</module>
     <module>api-passenger</module>
-      <module>sse-driver-client-web</module>
+    <module>service-sse-push</module>
   </modules>
 
   <packaging>pom</packaging>
