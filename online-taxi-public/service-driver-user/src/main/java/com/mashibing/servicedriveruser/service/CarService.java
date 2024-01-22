@@ -49,7 +49,7 @@ public class CarService {
         return ResponseResult.success();
     }
 
-    public ResponseResult<Car> getCatById(Long carId) {
+    public ResponseResult<Car> getCarById(Long carId) {
         Car car = carMapper.selectById(carId);
         return ResponseResult.success(car);
     }
