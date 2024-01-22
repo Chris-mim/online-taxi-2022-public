@@ -97,8 +97,22 @@ public class OrderInfoService {
 
         orderInfoMapper.insert(orderInfo);
 
-        // 派单 dispatchRealTimeOrder
-        dispatchRealTimeOrder(orderInfo);
+
+        // 定时任务的处理
+        for (int i =0;i<6;i++){
+            // 派单 dispatchRealTimeOrder
+            int result = dispatchRealTimeOrder(orderInfo);
+            if (result == 1){
+                break;
+            }
+            // 等待20s
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         return ResponseResult.success();
 
     }
@@ -108,23 +122,24 @@ public class OrderInfoService {
 
     /**
      * 调用终端周边搜索接口，派发司机车辆订单
-     *
+     * 如果返回1：派单成功
      * @param orderInfo
      */
-    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
+    public int dispatchRealTimeOrder(OrderInfo orderInfo) {
 //        // 因为方法执行时间太短，使用synchronized无法复现集群并发问题，所以加长方法执行时间，成功复现
 //        try {
 //            Thread.sleep(100);
 //        } catch (InterruptedException e) {
 //            throw new RuntimeException(e);
 //        }
+
+        log.info("循环一次");
         List<Integer> radiusList = new ArrayList<>();
         radiusList.add(2000);
         radiusList.add(4000);
         radiusList.add(5000);
         String center = orderInfo.getDepLatitude() + "," + orderInfo.getDepLongitude();
 
-        radius:
         for (int i = 0; i < radiusList.size(); i++) {
             Integer radius = radiusList.get(i);
             ResponseResult<List<TerminalResponse>> responseResult = serviceMapClient.aroundSearch(center, radius);
@@ -210,17 +225,16 @@ public class OrderInfoService {
 
                     lock.unlock();
 
-                    // 跳出最外层循环
-                    break radius;
+                    // 分配到司机
+                    return 1;
+
                 }
 
             }
 
-            // 找到符合的车辆，进行派单
-
-            // 如果派单成功，则退出循环
-
         }
+        return 0;
+
     }
 
     private Boolean isPriceRuleExists(OrderRequest orderRequest) {
