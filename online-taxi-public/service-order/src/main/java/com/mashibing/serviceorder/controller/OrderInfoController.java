@@ -19,7 +19,11 @@ public class OrderInfoController {
 
     @Autowired
     private OrderInfoService orderInfoService;
-
+    /**
+     * 创建订单
+     * @param orderRequest
+     * @return
+     */
     @PostMapping("/add")
     public ResponseResult add(@RequestBody OrderRequest orderRequest, HttpServletRequest httpServletRequest) {
 //        String deviceCode = httpServletRequest.getHeader(HeaderParamConstants.DEVICE_CODE);
@@ -27,6 +31,17 @@ public class OrderInfoController {
 //        log.info("deviceCode: {}", deviceCode);
 
         return orderInfoService.add(orderRequest);
+    }
+
+    /**
+     * 去接乘客
+     * @param orderRequest
+     * @return
+     */
+    @PostMapping("/to-pick-up-passenger")
+    public ResponseResult changeStatus(@RequestBody OrderRequest orderRequest){
+
+        return orderInfoService.toPickUpPassenger(orderRequest);
     }
 
     @RequestMapping("/testMapper")

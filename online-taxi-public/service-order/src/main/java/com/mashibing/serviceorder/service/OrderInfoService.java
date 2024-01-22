@@ -59,7 +59,11 @@ public class OrderInfoService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-
+    /**
+     * 新建订单
+     * @param orderRequest
+     * @return
+     */
     public ResponseResult add(OrderRequest orderRequest) {
         // 需要判断 下单的设备是否是 黑名单设备
         if (isBlackDevice(orderRequest.getDeviceCode())) {
@@ -236,7 +240,11 @@ public class OrderInfoService {
         return 0;
 
     }
-
+    /**
+     * 计价规则是否存在
+     * @param orderRequest
+     * @return
+     */
     private Boolean isPriceRuleExists(OrderRequest orderRequest) {
         String fareType = orderRequest.getFareType();
         int index = fareType.indexOf("$");
@@ -248,7 +256,11 @@ public class OrderInfoService {
         ResponseResult<Boolean> booleanResponseResult = this.servicePriceClient.ifPriceExists(priceRule);
         return booleanResponseResult.getData();
     }
-
+    /**
+     * 是否是黑名单
+     * @param orderRequest
+     * @return
+     */
     private boolean isBlackDevice(String deviceCode) {
         String deviceCodeKey = RedisPrefixUtils.generatorBlackDeviceCodeKey(deviceCode);
         Boolean hasKey = stringRedisTemplate.hasKey(deviceCodeKey);
@@ -315,6 +327,33 @@ public class OrderInfoService {
 
         BeanUtils.copyProperties(orderInfo, orderRequest);
         return orderRequest;
+
+    }
+
+    /**
+     * 去接乘客
+     * @param orderRequest
+     * @return
+     */
+    public ResponseResult toPickUpPassenger(OrderRequest orderRequest){
+        Long orderId = orderRequest.getOrderId();
+        LocalDateTime toPickUpPassengerTime = orderRequest.getToPickUpPassengerTime();
+        String toPickUpPassengerLongitude = orderRequest.getToPickUpPassengerLongitude();
+        String toPickUpPassengerLatitude = orderRequest.getToPickUpPassengerLatitude();
+        String toPickUpPassengerAddress = orderRequest.getToPickUpPassengerAddress();
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",orderId);
+        OrderInfo orderInfo = orderInfoMapper.selectOne(queryWrapper);
+
+        orderInfo.setToPickUpPassengerAddress(toPickUpPassengerAddress);
+        orderInfo.setToPickUpPassengerLatitude(toPickUpPassengerLatitude);
+        orderInfo.setToPickUpPassengerLongitude(toPickUpPassengerLongitude);
+        orderInfo.setToPickUpPassengerTime(toPickUpPassengerTime);
+        orderInfo.setOrderStatus(OrderConstants.DRIVER_TO_PICK_UP_PASSENGER);
+
+        orderInfoMapper.updateById(orderInfo);
+
+        return ResponseResult.success();
 
     }
 }
