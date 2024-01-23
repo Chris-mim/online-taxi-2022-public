@@ -356,4 +356,16 @@ public class OrderInfoService {
         return ResponseResult.success();
 
     }
+
+    public ResponseResult arrivedDeparture(OrderRequest orderRequest) {
+        Long orderId = orderRequest.getOrderId();
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", orderId);
+        OrderInfo orderInfo = orderInfoMapper.selectOne(queryWrapper);
+        orderInfo.setOrderStatus(OrderConstants.DRIVER_ARRIVED_DEPARTURE);
+        orderInfo.setDriverArrivedDepartureTime(LocalDateTime.now());
+        orderInfoMapper.updateById(orderInfo);
+        return ResponseResult.success();
+
+    }
 }
