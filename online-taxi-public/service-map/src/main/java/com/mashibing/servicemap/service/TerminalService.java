@@ -25,4 +25,14 @@ public class TerminalService {
     public ResponseResult<List<TerminalResponse>> aroundSearch(String center, Integer radius) {
         return terminalClient.aroundSearch(center,radius);
     }
+    /**
+     * 查询终端某一段时间内的轨迹信息
+     * @param tid 终端
+     * @param starttime 开始时间
+     * @param endtime 结束时间
+     * @return
+     */
+    public ResponseResult<List<TerminalResponse>> trsearch(String tid, Long starttime, Long endtime) {
+        return terminalClient.trsearch(tid, starttime, endtime);
+    }
 }

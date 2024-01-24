@@ -23,6 +23,10 @@ public class AmapConfigConstants {
      */
     public static final String TERMINAL_AROUNDSEARCH_URL = "https://tsapi.amap.com/v1/track/terminal/aroundsearch";
     /**
+     * 查询轨迹地址
+     */
+    public static final String TERMINAL_SEARCH_URL = "https://tsapi.amap.com/v1/track/terminal/trsearch";
+    /**
      * 创建轨迹地址
      */
     public static final String TRACK_ADD_URL = "https://tsapi.amap.com/v1/track/trace/add";
