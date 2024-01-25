@@ -117,7 +117,7 @@ public class TerminalClient {
      * @param endtime   结束时间
      * @return
      */
-    public ResponseResult<List<TrsearchResponse>> trsearch(String tid,
+    public ResponseResult<TrsearchResponse> trsearch(String tid,
                                                            Long starttime,
                                                            Long endtime) {
 

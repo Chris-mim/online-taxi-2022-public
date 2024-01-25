@@ -11,6 +11,7 @@ import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
 import com.mashibing.internalcommon.response.OrderDriverResponse;
 import com.mashibing.internalcommon.response.TerminalResponse;
+import com.mashibing.internalcommon.response.TrsearchResponse;
 import com.mashibing.internalcommon.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderInfoMapper;
 import com.mashibing.serviceorder.remote.ServiceDriverUserClient;
@@ -28,6 +29,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -258,7 +260,7 @@ public class OrderInfoService {
     }
     /**
      * 是否是黑名单
-     * @param orderRequest
+     * @param deviceCode
      * @return
      */
     private boolean isBlackDevice(String deviceCode) {
@@ -348,7 +350,7 @@ public class OrderInfoService {
         orderInfo.setToPickUpPassengerAddress(toPickUpPassengerAddress);
         orderInfo.setToPickUpPassengerLatitude(toPickUpPassengerLatitude);
         orderInfo.setToPickUpPassengerLongitude(toPickUpPassengerLongitude);
-        orderInfo.setToPickUpPassengerTime(toPickUpPassengerTime);
+        orderInfo.setToPickUpPassengerTime(LocalDateTime.now());
         orderInfo.setOrderStatus(OrderConstants.DRIVER_TO_PICK_UP_PASSENGER);
 
         orderInfoMapper.updateById(orderInfo);
@@ -356,7 +358,11 @@ public class OrderInfoService {
         return ResponseResult.success();
 
     }
-
+    /**
+     * 到达乘客上车点
+     * @param orderRequest
+     * @return
+     */
     public ResponseResult arrivedDeparture(OrderRequest orderRequest) {
         Long orderId = orderRequest.getOrderId();
         QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
@@ -407,7 +413,16 @@ public class OrderInfoService {
         orderInfo.setPassengerGetoffLatitude(orderRequest.getPassengerGetoffLatitude());
 
         orderInfo.setOrderStatus(OrderConstants.PASSENGER_GETOFF);
-        // 订单行驶的路程和时间
+        // 订单行驶的路程和时间,调用 service-map
+        ResponseResult<Car> carById = serviceDriverUserClient.getCarById(orderInfo.getCarId());
+        Long starttime = orderInfo.getPickUpPassengerTime().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long endtime = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        System.out.println("开始时间："+starttime);
+        System.out.println("结束时间："+endtime);
+        ResponseResult<TrsearchResponse> responseResult = serviceMapClient.trsearch(carById.getData().getTid(), starttime,endtime);
+        TrsearchResponse data = responseResult.getData();
+        orderInfo.setDriveMile(data.getDriveMile());
+        orderInfo.setDriveTime(data.getDriveTime());
 
         orderInfoMapper.updateById(orderInfo);
         return ResponseResult.success();

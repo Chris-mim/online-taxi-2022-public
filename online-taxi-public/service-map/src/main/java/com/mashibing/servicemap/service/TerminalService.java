@@ -33,7 +33,7 @@ public class TerminalService {
      * @param endtime 结束时间
      * @return
      */
-    public ResponseResult<List<TrsearchResponse>> trsearch(String tid, Long starttime, Long endtime) {
+    public ResponseResult<TrsearchResponse> trsearch(String tid, Long starttime, Long endtime) {
         return terminalClient.trsearch(tid, starttime, endtime);
     }
 }
