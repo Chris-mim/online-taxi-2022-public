@@ -6,6 +6,7 @@ import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.dto.TokenResult;
 import com.mashibing.internalcommon.util.JwtUtils;
 import com.mashibing.internalcommon.util.RedisPrefixUtils;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
+@Slf4j
 public class JwtInterceptor implements HandlerInterceptor {
 
     @Autowired
@@ -33,6 +35,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         }else{
             // 获取token key
             String tokenRedisKey = RedisPrefixUtils.generatorTokenKey(tokenResult.getPhone(),tokenResult.getIdentity(), TokenConstants.ACCESS_TOKEN_TYPE);
+            log.info("校验token：" + tokenRedisKey);
             String tokenRedis = stringRedisTemplate.opsForValue().get(tokenRedisKey);
             // 比较传入的Token和Redis里的Token
             if (StringUtils.isBlank(token) || !StringUtils.equals(tokenRedis,token)){
