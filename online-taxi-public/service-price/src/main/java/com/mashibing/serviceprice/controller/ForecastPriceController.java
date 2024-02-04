@@ -22,10 +22,7 @@ public class ForecastPriceController {
 
     /**
      * 计算实际价格
-     * @param distance
-     * @param duration
-     * @param cityCode
-     * @param vehicleType
+     * @param priceDTO
      * @return
      */
     @PostMapping("/calculate-price")

@@ -9,6 +9,7 @@ import com.mashibing.internalcommon.dto.PriceRule;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
+import com.mashibing.internalcommon.request.PriceDTO;
 import com.mashibing.internalcommon.response.OrderDriverResponse;
 import com.mashibing.internalcommon.response.TerminalResponse;
 import com.mashibing.internalcommon.response.TrsearchResponse;
@@ -433,6 +434,20 @@ public class OrderInfoService {
         TrsearchResponse data = responseResult.getData();
         orderInfo.setDriveMile(data.getDriveMile());
         orderInfo.setDriveTime(data.getDriveTime());
+
+
+        // 获取价格
+        String address = orderInfo.getAddress();
+
+        PriceDTO priceDTO = new PriceDTO();
+        priceDTO.setCityCode(address);
+        priceDTO.setDistance(data.getDriveMile().intValue());
+        priceDTO.setDuration(data.getDriveTime().intValue());
+        priceDTO.setVehicleType(orderInfo.getVehicleType());
+
+        ResponseResult<Double> doubleResponseResult = servicePriceClient.calculatePrice(priceDTO);
+        Double price = doubleResponseResult.getData();
+        orderInfo.setPrice(price);
 
         orderInfoMapper.updateById(orderInfo);
         return ResponseResult.success();

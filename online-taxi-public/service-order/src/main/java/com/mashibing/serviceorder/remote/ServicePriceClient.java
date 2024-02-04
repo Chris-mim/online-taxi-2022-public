@@ -2,8 +2,10 @@ package com.mashibing.serviceorder.remote;
 
 import com.mashibing.internalcommon.dto.PriceRule;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.request.PriceDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -26,4 +28,11 @@ public interface ServicePriceClient {
      */
     @GetMapping("/price-rule/if-exists")
     ResponseResult<Boolean> ifPriceExists(@RequestBody PriceRule priceRule);
+    /**
+     * 计算实际价格
+     * @param priceDTO
+     * @return
+     */
+    @PostMapping("/calculate-price")
+    ResponseResult calculatePrice(@RequestBody PriceDTO priceDTO);
 }
