@@ -3,7 +3,7 @@ package com.mashibing.internalcommon.request;
 import lombok.Data;
 
 @Data
-public class ForecastPriceDTO {
+public class PriceDTO {
 
     /**
      * 出发地经度
@@ -26,5 +26,12 @@ public class ForecastPriceDTO {
 
     private String vehicleType;
 
-
+    /**
+     * 距离
+     */
+    private Integer distance;
+    /**
+     * 时长
+     */
+    private Integer duration;
 }

@@ -170,6 +170,16 @@ public class OrderInfoService {
                     Long driverId = driverResponse.getDriverId();
                     // 单机锁司机ID小技巧:如果driverId在常量池内没有，则放入常量池 如果driverId字符串在常量池有则返回常量池里的地址，这里就锁住了同一个地址
 //                    synchronized ((driverId+"").intern()){
+
+                    String vehicleTypeFromCar = driverResponse.getVehicleType();
+
+                    // 判断车辆的车型是否符合？
+                    String vehicleType = orderInfo.getVehicleType();
+                    if (!vehicleType.trim().equals(vehicleTypeFromCar.trim())){
+                        log.info("车型不符合");
+                        continue ;
+                    }
+
                     String lockKey = driverId + "";
                     RLock lock = redissonClient.getLock(lockKey);
 

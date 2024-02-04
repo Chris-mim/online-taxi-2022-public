@@ -13,7 +13,8 @@
                rel.driver_id,
                rel.car_id,
                user.license_id,
-               car.vehicle_no
+               car.vehicle_no,
+               car.vehicle_type
         FROM
             driver_car_binding_relationship rel
             INNER JOIN driver_user user ON rel.driver_id = USER.id

@@ -1,7 +1,7 @@
 package com.mashibing.servicemap.controller;
 
 import com.mashibing.internalcommon.dto.ResponseResult;
-import com.mashibing.internalcommon.request.ForecastPriceDTO;
+import com.mashibing.internalcommon.request.PriceDTO;
 import com.mashibing.servicemap.service.DirectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class DirectionController {
     private DirectionService directionService;
 
     @GetMapping("/driving")
-    public ResponseResult driving(@RequestBody ForecastPriceDTO forecastPriceDTO){
-        return directionService.driving(forecastPriceDTO);
+    public ResponseResult driving(@RequestBody PriceDTO priceDTO){
+        return directionService.driving(priceDTO);
     }
 }

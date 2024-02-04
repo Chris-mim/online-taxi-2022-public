@@ -1,10 +1,9 @@
 package com.mashibing.servicemap.remote;
 
 import com.mashibing.internalcommon.constant.AmapConfigConstants;
-import com.mashibing.internalcommon.request.ForecastPriceDTO;
+import com.mashibing.internalcommon.request.PriceDTO;
 import com.mashibing.internalcommon.response.DirectionResponse;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class MapDirectionClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    public DirectionResponse direction(ForecastPriceDTO param) {
+    public DirectionResponse direction(PriceDTO param) {
         /**
          *  https://restapi.amap.com/v3/direction/driving
          *  ?origin=116.481028,39.989643

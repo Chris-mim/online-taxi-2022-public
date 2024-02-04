@@ -1,7 +1,7 @@
 package com.mashibing.apipassenger.controller;
 
 import com.mashibing.apipassenger.service.ForecastPriceService;
-import com.mashibing.internalcommon.request.ForecastPriceDTO;
+import com.mashibing.internalcommon.request.PriceDTO;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ public class ForecastPriceController {
     private ForecastPriceService forecastPriceService;
 
     @PostMapping("/forecast-price")
-    public ResponseResult forecastPrice(@RequestBody ForecastPriceDTO forecastPriceDTO){
-        return forecastPriceService.forecastPrice(forecastPriceDTO);
+    public ResponseResult forecastPrice(@RequestBody PriceDTO priceDTO){
+        return forecastPriceService.forecastPrice(priceDTO);
     }
 }

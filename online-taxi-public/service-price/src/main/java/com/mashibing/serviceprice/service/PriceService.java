@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import com.mashibing.internalcommon.dto.PriceRule;
 import com.mashibing.internalcommon.dto.ResponseResult;
-import com.mashibing.internalcommon.request.ForecastPriceDTO;
+import com.mashibing.internalcommon.request.PriceDTO;
 import com.mashibing.internalcommon.response.DirectionResponse;
 import com.mashibing.internalcommon.response.ForecastPriceResponse;
 import com.mashibing.serviceprice.mapper.PriceRuleMapper;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class ForecastPriceService {
+public class PriceService {
 
     @Autowired
     private ServiceMapClient serviceMapClient;
@@ -27,7 +27,7 @@ public class ForecastPriceService {
     @Autowired
     private PriceRuleMapper priceRuleMapper;
 
-    public ResponseResult<ForecastPriceResponse> forecastPrice(ForecastPriceDTO param) {
+    public ResponseResult<ForecastPriceResponse> forecastPrice(PriceDTO param) {
         log.info("出发地经度：" + param.getDepLongitude());
         log.info("出发地纬度：" + param.getDepLatitude());
         log.info("目的地经度：" + param.getDestLongitude());
@@ -90,6 +90,26 @@ public class ForecastPriceService {
                 .divide(new BigDecimal(60), 2, RoundingMode.HALF_UP);
         price = price.add(timeFare);
         return price.doubleValue();
+    }
+
+    public ResponseResult calculatePrice(PriceDTO priceDTO) {
+        // 查询计价规则
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("city_code", priceDTO.getCityCode());
+        queryWrapper.eq("vehicle_type", priceDTO.getVehicleType());
+        queryWrapper.orderByDesc("fare_version");
+
+        List<PriceRule> priceRules = priceRuleMapper.selectList(queryWrapper);
+        if (priceRules.size() == 0){
+            return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_NOT_EXIST);
+        }
+
+        PriceRule priceRule = priceRules.get(0);
+
+        log.info("根据距离、时长和计价规则，计算价格");
+
+        double price = getPrice(priceDTO.getDistance(), priceDTO.getDuration(), priceRule);
+        return ResponseResult.success(price);
     }
 
 //    public static void main(String[] args) {
