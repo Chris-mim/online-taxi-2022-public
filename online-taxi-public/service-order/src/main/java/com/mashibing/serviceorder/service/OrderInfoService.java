@@ -452,4 +452,11 @@ public class OrderInfoService {
         orderInfoMapper.updateById(orderInfo);
         return ResponseResult.success();
     }
+
+    public ResponseResult pay(OrderRequest orderRequest) {
+        OrderInfo orderInfo = orderInfoMapper.selectById(orderRequest.getOrderId());
+        orderInfo.setOrderStatus(OrderConstants.SUCCESS_PAY);
+        orderInfoMapper.updateById(orderInfo);
+        return ResponseResult.success();
+    }
 }
