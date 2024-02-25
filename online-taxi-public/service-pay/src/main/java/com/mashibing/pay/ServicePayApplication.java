@@ -1,4 +1,4 @@
-package com.mashibing.testalipay;
+package com.mashibing.pay;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
-public class TestAlipayApplication {
+public class ServicePayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TestAlipayApplication.class, args);
+        SpringApplication.run(ServicePayApplication.class, args);
     }
 
     @PostMapping("/test")
