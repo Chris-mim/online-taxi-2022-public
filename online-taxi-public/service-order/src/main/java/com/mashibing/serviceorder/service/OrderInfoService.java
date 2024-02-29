@@ -107,18 +107,25 @@ public class OrderInfoService {
 
 
         // 定时任务的处理
-        for (int i =0;i<6;i++){
+        for (int i =0;i<6;i++) {
             // 派单 dispatchRealTimeOrder
             int result = dispatchRealTimeOrder(orderInfo);
-            if (result == 1){
+            if (result == 1) {
                 break;
             }
-            // 等待20s
-            try {
-                Thread.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (i == 5) {
+                // 订单无效
+                orderInfo.setOrderStatus(OrderConstants.ORDER_INVALID);
+                orderInfoMapper.updateById(orderInfo);
+            } else {
+                // 等待20s
+                try {
+                    Thread.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+
         }
 
         return ResponseResult.success();
