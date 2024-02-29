@@ -17,4 +17,13 @@ public interface ServiceOrderClient {
 
     @GetMapping("/order/test-dispatch-real-time-order")
     String dispatchRealTimeOrder(@RequestParam Long orderId);
+
+    /**
+     * 订单取消
+     * @param orderId
+     * @param identity
+     * @return
+     */
+    @PostMapping("/order/cancel")
+    ResponseResult cancel(@RequestParam Long orderId, @RequestParam String identity);
 }

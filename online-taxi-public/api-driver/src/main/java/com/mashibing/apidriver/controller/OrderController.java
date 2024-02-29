@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/order")
-public class ApiDriverOrderInfoController {
+public class OrderController {
     
     @Autowired
     private ApiDriverOrderInfoService apiDriverOrderInfoService;
@@ -56,6 +57,16 @@ public class ApiDriverOrderInfoController {
     @PostMapping("/passenger-getoff")
     public ResponseResult passengerGetoff(@RequestBody OrderRequest orderRequest){
         return apiDriverOrderInfoService.passengerGetoff(orderRequest);
+    }
+
+    /**
+     * 取消订单
+     * @param orderId
+     * @return
+     */
+    @PostMapping("/cancel")
+    public ResponseResult cancel(@RequestParam Long orderId){
+        return apiDriverOrderInfoService.cancel(orderId);
     }
 
 
