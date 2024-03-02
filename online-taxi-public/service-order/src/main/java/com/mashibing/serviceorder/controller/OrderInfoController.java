@@ -99,6 +99,16 @@ public class OrderInfoController {
     }
 
 
+    /**
+     * 司机发起收款
+     * @param orderRequest
+     * @return
+     */
+    @PostMapping("/push-pay-info")
+    public ResponseResult pushPayInfo(@RequestBody OrderRequest orderRequest){
+        return orderInfoService.pushPayInfo(orderRequest);
+    }
+
     @RequestMapping("/testMapper")
     public OrderRequest testMapper() {
         return orderInfoService.testMapper();

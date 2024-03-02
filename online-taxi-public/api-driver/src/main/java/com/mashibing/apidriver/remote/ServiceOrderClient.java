@@ -51,4 +51,7 @@ public interface ServiceOrderClient {
     @PostMapping("/order/cancel")
     ResponseResult cancel(@RequestParam Long orderId, @RequestParam String identity);
 
+    @PostMapping("/order/push-pay-info")
+    ResponseResult pushPayInfo(@RequestBody OrderRequest orderRequest);
+
 }
