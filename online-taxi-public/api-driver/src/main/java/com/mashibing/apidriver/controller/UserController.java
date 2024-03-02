@@ -2,8 +2,10 @@ package com.mashibing.apidriver.controller;
 
 import com.mashibing.apidriver.service.UserService;
 import com.mashibing.internalcommon.dto.DriverUser;
+import com.mashibing.internalcommon.dto.DriverUserWorkStatus;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,4 +23,14 @@ public class UserController {
         return userService.updateUser(driverUser);
     }
 
+
+    /**
+     * 修改司机状态（出车、收车）
+     * @param driverUserWorkStatus
+     * @return
+     */
+    @PostMapping("/driver-user-work-status")
+    public ResponseResult changeWorkStatus(@RequestBody DriverUserWorkStatus driverUserWorkStatus){
+        return userService.changeWorkStatus(driverUserWorkStatus);
+    }
 }

@@ -27,6 +27,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/verification-code")
                 .excludePathPatterns("/verification-code-check")
                 .excludePathPatterns("/refresh-token")
+                .excludePathPatterns("/error") // 调用feign报错时，会跳转/error地址
                 .excludePathPatterns("/order/test-dispatch-real-time-order");
     }
 }

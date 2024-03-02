@@ -17,7 +17,7 @@ public class PointController {
     private PointService service;
 
     /**
-     * 轨迹点上传（单点、批量）
+     * 上传车辆信息: 轨迹点上传（单点、批量）
      * @return
      */
     @PostMapping("/upload")

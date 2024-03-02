@@ -1,0 +1,22 @@
+乘客端
+
+手机号：15674800000
+验证码：711660
+access_token:
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IjE1Njc0ODAwMDAwIiwiaWRlbnRpdHkiOiIxIiwidG9rZW5UaW1lIjoiU2F0IE1hciAwMiAwOTo1NTozNCBDU1QgMjAyNCIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIn0.7uL0VjrvBTnSwRffno74gJ8_D0XojMjnLMJ1dXtS9Js
+
+{
+    "depLongitude": "116.32",
+    "depLatitude": "39.89",
+    "destLongitude": "116.34",
+    "destLatitude": "39.90",
+    "cityCode":"110000",
+    "vehicleType":"qqq"
+}
+
+
+
+司机端
+手机号：1233134000
+accessToken:
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IjEyMzMxMzQwMDAiLCJpZGVudGl0eSI6IjIiLCJ0b2tlblRpbWUiOiJTYXQgTWFyIDAyIDEwOjAzOjEyIENTVCAyMDI0IiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4ifQ.yhx7-M3gjFwZIvZnBmgSjW8ytzK75jF9U_C32CHORfg
