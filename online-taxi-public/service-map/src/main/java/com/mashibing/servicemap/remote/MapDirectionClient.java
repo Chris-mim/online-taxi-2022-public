@@ -21,7 +21,10 @@ public class MapDirectionClient {
 
     @Autowired
     private RestTemplate restTemplate;
-
+    /**
+     * 根据起点经纬度和终点经纬获取距离（米）和时长（分钟）
+     * @return 距离（米）和时长（分钟）
+     */
     public DirectionResponse direction(PriceDTO param) {
         /**
          *  https://restapi.amap.com/v3/direction/driving

@@ -29,7 +29,11 @@ public class PointClient {
     private RestTemplate restTemplate;
 
 
-
+    /**
+     * 轨迹点上传
+     * @param pointRequest
+     * @return
+     */
     public ResponseResult upload(PointRequest pointRequest) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -48,9 +52,9 @@ public class PointClient {
         map.add("points", JSONObject.toJSONString(pointRequest.getPoints()));
 
         HttpEntity<MultiValueMap<String,Object>> request = new HttpEntity<>(map,headers);
-
+        System.out.println("轨迹点上传：高德地图请求："+AmapConfigConstants.POINT_UPLOAD_URL);
         ResponseEntity<String> entity = restTemplate.postForEntity(AmapConfigConstants.POINT_UPLOAD_URL, request, String.class);
-        System.out.println("高德地图响应："+entity.getBody());
+        System.out.println("轨迹点上传：高德地图响应："+entity.getBody());
 
         return ResponseResult.success();
     }
