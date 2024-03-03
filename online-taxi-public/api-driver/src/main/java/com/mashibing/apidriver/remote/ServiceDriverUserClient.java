@@ -22,4 +22,7 @@ public interface ServiceDriverUserClient {
 
     @GetMapping("/driver-car-binding-relationship")
     ResponseResult<DriverCarBindingRelationship> getDriverCarRelationShip(@RequestParam String driverPhone);
+
+    @GetMapping("/work-status")
+    public ResponseResult<DriverUserWorkStatus> getWorkStatus(@RequestParam Long driverId);
 }

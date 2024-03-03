@@ -31,4 +31,8 @@ public class UserService {
         // 根据driverPhone查询司机信息
         return serviceDriverUserClient.getDriverCarRelationShip(driverPhone);
     }
+
+    public ResponseResult<DriverUserWorkStatus> getWorkStatus(Long driverId){
+        return serviceDriverUserClient.getWorkStatus(driverId);
+    }
 }

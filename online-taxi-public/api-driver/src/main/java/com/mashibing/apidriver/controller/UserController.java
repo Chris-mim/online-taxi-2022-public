@@ -50,4 +50,9 @@ public class UserController {
         return userService.getDriverCarBindingRelationship(driverPhone);
 
     }
+
+    @GetMapping("/work-status")
+    public ResponseResult<DriverUserWorkStatus> getWorkStatus(Long driverId){
+        return userService.getWorkStatus(driverId);
+    }
 }
