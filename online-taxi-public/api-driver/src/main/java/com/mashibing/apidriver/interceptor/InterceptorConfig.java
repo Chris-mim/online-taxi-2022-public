@@ -24,6 +24,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 // 不拦截的路径
                 .excludePathPatterns("/noauthTest")
+                .excludePathPatterns("/error") // 调用feign报错时，会跳转/error地址
                 .excludePathPatterns("/verification-code")
                 .excludePathPatterns("/verification-code-check");
     }
