@@ -10,6 +10,7 @@ import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
 import com.mashibing.internalcommon.request.PriceDTO;
+import com.mashibing.internalcommon.request.PushRequest;
 import com.mashibing.internalcommon.response.OrderDriverResponse;
 import com.mashibing.internalcommon.response.TerminalResponse;
 import com.mashibing.internalcommon.response.TrsearchResponse;
@@ -229,8 +230,13 @@ public class OrderInfoService {
                     driverContent.put("destination", orderInfo.getDestination());
                     driverContent.put("destLongitude", orderInfo.getDestLongitude());
                     driverContent.put("destLatitude", orderInfo.getDestLatitude());
-                    serviceSsePushClient.push(driverId, IdentityConstants.DRIVER_IDENTITY, driverContent.toString());
 
+                    PushRequest pushRequest = new PushRequest();
+                    pushRequest.setUserId(driverId);
+                    pushRequest.setIdentity(IdentityConstants.DRIVER_IDENTITY);
+                    pushRequest.setContent(driverContent.toString());
+
+                    serviceSsePushClient.push(pushRequest);
                     // 通知乘客
                     JSONObject passengerContent = new  JSONObject();
                     passengerContent.put("orderId", orderInfo.getId());
@@ -248,7 +254,12 @@ public class OrderInfoService {
                     passengerContent.put("receiveOrderCarLongitude",orderInfo.getReceiveOrderCarLongitude());
                     passengerContent.put("receiveOrderCarLatitude",orderInfo.getReceiveOrderCarLatitude());
 
-                    serviceSsePushClient.push(orderInfo.getPassengerId(), IdentityConstants.PASSENGER_IDENTITY,passengerContent.toString());
+                    PushRequest pushRequest1 = new PushRequest();
+                    pushRequest1.setUserId(orderInfo.getPassengerId());
+                    pushRequest1.setIdentity(IdentityConstants.PASSENGER_IDENTITY);
+                    pushRequest1.setContent(passengerContent.toString());
+
+                    serviceSsePushClient.push(pushRequest1);
 
                     lock.unlock();
 

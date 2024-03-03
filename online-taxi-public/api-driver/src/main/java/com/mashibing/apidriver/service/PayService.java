@@ -5,6 +5,7 @@ import com.mashibing.apidriver.remote.ServiceSsePushClient;
 import com.mashibing.internalcommon.constant.IdentityConstants;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.request.OrderRequest;
+import com.mashibing.internalcommon.request.PushRequest;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,13 @@ public class PayService {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setOrderId(orderId);
         serviceOrderClient.pushPayInfo(orderRequest);
+        PushRequest pushRequest = new PushRequest();
+        pushRequest.setContent(message.toString());
+        pushRequest.setUserId(passengerId);
+        pushRequest.setIdentity(IdentityConstants.PASSENGER_IDENTITY);
 
         // 推送消息
-        serviceSsePushClient.push(passengerId, IdentityConstants.PASSENGER_IDENTITY,message.toString());
+        serviceSsePushClient.push(pushRequest);
         return ResponseResult.success();
     }
 }
