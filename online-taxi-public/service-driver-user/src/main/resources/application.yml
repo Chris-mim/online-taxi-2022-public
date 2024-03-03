@@ -24,6 +24,9 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     # map 映射value为null的情况
     call-setters-on-nulls: true
+  global-config:
+    db-config:
+      id-type: auto
 logging:
   level:
     com.baomidou.mybatisplus: debug
