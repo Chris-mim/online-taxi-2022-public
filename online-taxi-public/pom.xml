@@ -26,7 +26,6 @@
     <module>service-order</module>
     <module>api-boss</module>
     <module>api-driver</module>
-    <module>api-passenger</module>
     <module>service-sse-push</module>
     <module>service-pay</module>
   </modules>
