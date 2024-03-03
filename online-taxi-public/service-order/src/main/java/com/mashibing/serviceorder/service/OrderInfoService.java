@@ -71,9 +71,9 @@ public class OrderInfoService {
      */
     public ResponseResult add(OrderRequest orderRequest) {
         // 需要判断 下单的设备是否是 黑名单设备
-        if (isBlackDevice(orderRequest.getDeviceCode())) {
-            return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
-        }
+//        if (isBlackDevice(orderRequest.getDeviceCode())) {
+//            return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK);
+//        }
 
         // 判断当前城市的司机是否可用
         ResponseResult<Boolean> isAvailableDriver = serviceDriverUserClient.isAvailableDriver(orderRequest.getAddress());
@@ -583,5 +583,10 @@ public class OrderInfoService {
         orderInfoMapper.updateById(orderInfo);
         return ResponseResult.success();
 
+    }
+
+    public ResponseResult<OrderInfo> detail(Long orderId){
+        OrderInfo orderInfo =  orderInfoMapper.selectById(orderId);
+        return ResponseResult.success(orderInfo);
     }
 }

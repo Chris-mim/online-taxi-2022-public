@@ -2,13 +2,10 @@ package com.mashibing.apidriver.controller;
 
 import com.mashibing.apidriver.service.ApiDriverOrderInfoService;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order")
@@ -69,5 +66,8 @@ public class OrderController {
         return apiDriverOrderInfoService.cancel(orderId);
     }
 
-
+    @GetMapping("/detail")
+    public ResponseResult<OrderInfo> detail(Long orderId){
+        return apiDriverOrderInfoService.detail(orderId);
+    }
 }

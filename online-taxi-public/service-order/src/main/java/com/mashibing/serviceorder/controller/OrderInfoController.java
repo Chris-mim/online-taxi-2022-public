@@ -34,6 +34,16 @@ public class OrderInfoController {
     }
 
     /**
+     * 订单详情
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/detail")
+    public ResponseResult<OrderInfo> detail(Long orderId){
+        return orderInfoService.detail(orderId);
+    }
+
+    /**
      * 去接乘客
      * @param orderRequest
      * @return

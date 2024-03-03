@@ -1,11 +1,10 @@
 package com.mashibing.apidriver.remote;
 
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient("service-order")
 public interface ServiceOrderClient {
@@ -54,4 +53,6 @@ public interface ServiceOrderClient {
     @PostMapping("/order/push-pay-info")
     ResponseResult pushPayInfo(@RequestBody OrderRequest orderRequest);
 
+    @RequestMapping(method = RequestMethod.GET, value = "/order/detail")
+    public ResponseResult<OrderInfo> detail(@RequestParam Long orderId);
 }

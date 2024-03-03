@@ -3,6 +3,7 @@ package com.mashibing.apidriver.service;
 import com.mashibing.apidriver.remote.ServiceOrderClient;
 import com.mashibing.internalcommon.constant.IdentityConstants;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,5 +33,9 @@ public class ApiDriverOrderInfoService {
 
     public ResponseResult cancel(Long orderId) {
         return serviceOrderClient.cancel(orderId, IdentityConstants.DRIVER_IDENTITY);
+    }
+
+    public ResponseResult<OrderInfo> detail(Long orderId){
+        return serviceOrderClient.detail(orderId);
     }
 }
