@@ -54,5 +54,8 @@ public interface ServiceOrderClient {
     ResponseResult pushPayInfo(@RequestBody OrderRequest orderRequest);
 
     @RequestMapping(method = RequestMethod.GET, value = "/order/detail")
-    public ResponseResult<OrderInfo> detail(@RequestParam Long orderId);
+    ResponseResult<OrderInfo> detail(@RequestParam Long orderId);
+
+    @RequestMapping(method = RequestMethod.GET, value = "/order/current")
+    ResponseResult current(@RequestParam String phone ,@RequestParam String identity);
 }

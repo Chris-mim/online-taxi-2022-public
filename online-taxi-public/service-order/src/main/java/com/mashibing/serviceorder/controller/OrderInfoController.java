@@ -43,6 +43,11 @@ public class OrderInfoController {
         return orderInfoService.detail(orderId);
     }
 
+    @GetMapping("/current")
+    public ResponseResult current(String phone , String identity){
+        return orderInfoService.current(phone , identity);
+    }
+
     /**
      * 去接乘客
      * @param orderRequest
