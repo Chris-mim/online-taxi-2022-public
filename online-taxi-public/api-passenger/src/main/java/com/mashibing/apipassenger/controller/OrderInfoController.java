@@ -9,12 +9,16 @@ import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
 import com.mashibing.internalcommon.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/order")
+@Validated
 public class OrderInfoController {
 
     @Autowired
@@ -37,7 +41,7 @@ public class OrderInfoController {
     }
 
     @GetMapping("/detail")
-    public ResponseResult<OrderInfo> detail(Long orderId){
+    public ResponseResult<OrderInfo> detail(@NotNull @Positive Long orderId){
         return orderInfoService.detail(orderId);
     }
 
