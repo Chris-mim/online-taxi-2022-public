@@ -1,7 +1,7 @@
 package com.mashibing.apipassenger.remote;
 
-import com.mashibing.apipassenger.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

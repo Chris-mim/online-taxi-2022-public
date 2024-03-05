@@ -3,11 +3,12 @@ package com.mashibing.apipassenger.service;
 import com.alibaba.cloud.commons.lang.StringUtils;
 import com.mashibing.apipassenger.remote.ServicePassengerUserClient;
 import com.mashibing.apipassenger.remote.ServiceVerificationcodeClient;
-import com.mashibing.apipassenger.request.VerificationCodeDTO;
+import com.mashibing.apipassenger.request.CheckVerificationCodeDTO;
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import com.mashibing.internalcommon.constant.IdentityConstants;
 import com.mashibing.internalcommon.constant.TokenConstants;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.response.NumberCodeResponse;
 import com.mashibing.internalcommon.response.TokenResponse;
 import com.mashibing.internalcommon.util.JwtUtils;
@@ -60,7 +61,7 @@ public class VerificationCodeService {
      *                            或者对于有很多地方调用的，调用起来还要封装一个对象，会不太方便
      * @return
      */
-    public ResponseResult checkCode(VerificationCodeDTO verificationCodeDTO) {
+    public ResponseResult checkCode(CheckVerificationCodeDTO verificationCodeDTO) {
         // 去redis 读取验证码
         String key = RedisPrefixUtils.getPhoneKey(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY);
         String codeRedis = stringRedisTemplate.opsForValue().get(key);
@@ -71,8 +72,10 @@ public class VerificationCodeService {
         if (!StringUtils.equals(codeRedis, verificationCodeDTO.getVerificationCode())) {
             return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERR);
         }
+        VerificationCodeDTO requestLogin = new VerificationCodeDTO();
+        requestLogin.setPassengerPhone(verificationCodeDTO.getPassengerPhone());
         // 判断原来是否有用户，并进行对应的处理
-        servicePassengerUserClient.loginOrRegister(verificationCodeDTO);
+        servicePassengerUserClient.loginOrRegister(requestLogin);
 
         // 颁发令牌
         String accessToken = JwtUtils.generatorToken(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY, TokenConstants.ACCESS_TOKEN_TYPE);
