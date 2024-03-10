@@ -15,11 +15,13 @@ public class GlobalValidationExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseResult validationExceptionHandler(MethodArgumentNotValidException e) {
+        e.printStackTrace();
         return ResponseResult.fail(CommonStatusEnum.VALIDATION_EXCEPTION.getCode(),e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseResult validationExceptionHandler(ConstraintViolationException e) {
+        e.printStackTrace();
         Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
         String message = "";
         for (ConstraintViolation c: constraintViolations ) {

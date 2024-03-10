@@ -7,13 +7,13 @@ import java.time.format.DateTimeFormatter;
 
 public class DateTimeRangeValidator implements ConstraintValidator<DateTimeRange,Object> {
 
-    /**
-     * 会自动注入注解
-     */
-    private DateTimeRange dateTimeRange;
+    private String judge;
+    private String pattern;
 
     @Override
     public void initialize(DateTimeRange constraintAnnotation) {
+        judge = constraintAnnotation.judge();
+        pattern = constraintAnnotation.pattern();
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
@@ -28,12 +28,14 @@ public class DateTimeRangeValidator implements ConstraintValidator<DateTimeRange
             dateValue = (LocalDateTime) paramDate;
         }
         if (paramDate instanceof String){
-            dateValue = LocalDateTime.parse((String)paramDate, DateTimeFormatter.ofPattern(dateTimeRange.pattern()));
+            dateValue = LocalDateTime.parse((String)paramDate, DateTimeFormatter.ofPattern(pattern));
         }
-
         LocalDateTime now = LocalDateTime.now();
 
-        if(dateValue.isAfter(now)){
+        if(judge.equals(DateTimeRange.IS_AFTER)  && dateValue.isAfter(now)){
+            return true;
+        }
+        if(judge.equals(DateTimeRange.IS_BEFORE)  && dateValue.isBefore(now)){
             return true;
         }
 

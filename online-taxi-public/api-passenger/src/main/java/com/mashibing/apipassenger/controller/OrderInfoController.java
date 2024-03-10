@@ -26,7 +26,8 @@ public class OrderInfoController {
 
     @PostMapping("/add")
     public ResponseResult add(@Validated @RequestBody OrderRequest orderRequest){
-        return orderInfoService.add(orderRequest);
+        return ResponseResult.fail(9,"参数校验通过");
+//        return orderInfoService.add(orderRequest);
     }
 
 
