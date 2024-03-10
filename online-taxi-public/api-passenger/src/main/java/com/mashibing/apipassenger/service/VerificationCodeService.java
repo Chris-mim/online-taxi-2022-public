@@ -14,6 +14,9 @@ import com.mashibing.internalcommon.response.TokenResponse;
 import com.mashibing.internalcommon.util.JwtUtils;
 import com.mashibing.internalcommon.util.RedisPrefixUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -75,21 +78,51 @@ public class VerificationCodeService {
         VerificationCodeDTO requestLogin = new VerificationCodeDTO();
         requestLogin.setPassengerPhone(verificationCodeDTO.getPassengerPhone());
         // 判断原来是否有用户，并进行对应的处理
-        servicePassengerUserClient.loginOrRegister(requestLogin);
+        try {
+            servicePassengerUserClient.loginOrRegister(requestLogin);
+        }catch (RuntimeException e){
+            return ResponseResult.fail(CommonStatusEnum.CALL_USER_ADD_ERROR);
+        }
+
 
         // 颁发令牌
         String accessToken = JwtUtils.generatorToken(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY, TokenConstants.ACCESS_TOKEN_TYPE);
         String refreshToken = JwtUtils.generatorToken(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY, TokenConstants.REFRESH_TOKEN_TYPE);
-        // 将token存到redis当中
-        String accessTokenKey = RedisPrefixUtils.generatorTokenKey(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY, TokenConstants.ACCESS_TOKEN_TYPE);
-        String refreshTokenKey = RedisPrefixUtils.generatorTokenKey(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY, TokenConstants.REFRESH_TOKEN_TYPE);
-        stringRedisTemplate.opsForValue().set(accessTokenKey, accessToken, 30, TimeUnit.DAYS);
-        stringRedisTemplate.opsForValue().set(refreshTokenKey, refreshToken, 31, TimeUnit.DAYS);
 
-        // 响应
-        TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setAccessToken(accessToken);
-        tokenResponse.setRefreshToken(refreshToken);
-        return ResponseResult.success(tokenResponse);
+        // 开启redis事务 支持
+        stringRedisTemplate.setEnableTransactionSupport(true);
+
+        SessionCallback<Boolean> callback = new SessionCallback<Boolean>() {
+            @Override
+            public Boolean execute(RedisOperations operations) throws DataAccessException {
+                // 事务开始
+                stringRedisTemplate.multi();
+                try {
+                    // 将token存到redis当中
+                    String accessTokenKey = RedisPrefixUtils.generatorTokenKey(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY, TokenConstants.ACCESS_TOKEN_TYPE);
+                    operations.opsForValue().set(accessTokenKey, accessToken, 30, TimeUnit.DAYS);
+                    int i = 1 / 0;
+                    String refreshTokenKey = RedisPrefixUtils.generatorTokenKey(verificationCodeDTO.getPassengerPhone(), IdentityConstants.PASSENGER_IDENTITY, TokenConstants.REFRESH_TOKEN_TYPE);
+                    operations.opsForValue().set(refreshTokenKey, refreshToken, 31, TimeUnit.DAYS);
+                    operations.exec();
+                    return true;
+                }catch (Exception e){
+                    operations.discard();
+                    return false;
+                }
+
+            }
+        };
+        Boolean execute = stringRedisTemplate.execute(callback);
+        System.out.println("事务提交or回滚："+execute);
+        if (execute) {
+            // 响应
+            TokenResponse tokenResponse = new TokenResponse();
+            tokenResponse.setAccessToken(accessToken);
+            tokenResponse.setRefreshToken(refreshToken);
+            return ResponseResult.success(tokenResponse);
+        }else {
+            return ResponseResult.fail(CommonStatusEnum.CHECK_CODE_ERROR.getCode(),CommonStatusEnum.CHECK_CODE_ERROR.getValue());
+        }
     }
 }

@@ -5,6 +5,9 @@ import lombok.Getter;
 
 public enum CommonStatusEnum {
 
+    CALL_USER_ADD_ERROR(1000,"调用新增用户异常"),
+
+    CHECK_CODE_ERROR(1001,"验证手机号和验证码 异常"),
     /**
      * 验证码错误提示：1000-1099
      */
