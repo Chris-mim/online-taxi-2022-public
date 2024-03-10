@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = VehicleTypeCheckValidator.class)
+@Constraint(validatedBy = DateTimeRangeValidator.class)
 public @interface DateTimeRange {
 
     String pattern() default "yyyy-MM-dd HH:mm:ss";
@@ -20,6 +20,8 @@ public @interface DateTimeRange {
      * @return
      */
     String judge() default "isAfter";
+
+    String message() default "日期不正确";
 
     Class<?>[] groups() default {};
 

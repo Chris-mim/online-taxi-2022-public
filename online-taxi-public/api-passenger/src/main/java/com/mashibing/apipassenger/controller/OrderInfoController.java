@@ -25,7 +25,7 @@ public class OrderInfoController {
     private OrderInfoService orderInfoService;
 
     @PostMapping("/add")
-    public ResponseResult add(@RequestBody OrderRequest orderRequest){
+    public ResponseResult add(@Validated @RequestBody OrderRequest orderRequest){
         return orderInfoService.add(orderRequest);
     }
 
