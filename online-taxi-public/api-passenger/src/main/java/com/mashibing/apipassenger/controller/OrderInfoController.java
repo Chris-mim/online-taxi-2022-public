@@ -26,8 +26,7 @@ public class OrderInfoController {
 
     @PostMapping("/add")
     public ResponseResult add(@Validated @RequestBody OrderRequest orderRequest){
-        return ResponseResult.fail(9,"参数校验通过");
-//        return orderInfoService.add(orderRequest);
+        return orderInfoService.add(orderRequest);
     }
 
 
@@ -37,12 +36,12 @@ public class OrderInfoController {
      * @return
      */
     @PostMapping("/cancel")
-    public ResponseResult cancel(@RequestParam Long orderId){
+    public ResponseResult cancel(@NotNull(message = "订单id不能为空") @Positive(message = "订单id格式不正确") @RequestParam Long orderId){
         return orderInfoService.cancel(orderId);
     }
 
     @GetMapping("/detail")
-    public ResponseResult<OrderInfo> detail(@NotNull @Positive Long orderId){
+    public ResponseResult<OrderInfo> detail(@NotNull(message = "订单id不能为空") @Positive Long orderId){
         return orderInfoService.detail(orderId);
     }
 
