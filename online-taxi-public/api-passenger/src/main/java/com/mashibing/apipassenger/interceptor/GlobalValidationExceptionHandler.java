@@ -2,6 +2,7 @@ package com.mashibing.apipassenger.interceptor;
 
 import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,6 +12,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.Set;
 
 @RestControllerAdvice
+@Order(1)  // 决定异常捕捉的顺序,越小越优先
 public class GlobalValidationExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

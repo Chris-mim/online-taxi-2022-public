@@ -18,6 +18,7 @@ public class VerificationCodeController {
 
     @PostMapping("/verification-code")
     public ResponseResult verificationCode(@Validated  @RequestBody SendVerificationCodeDTO verificationCodeDTO){
+//        int i = 1/0;
         String passengerPhone = verificationCodeDTO.getPassengerPhone();
         return verificationCodeService.generatorCode(passengerPhone);
 
