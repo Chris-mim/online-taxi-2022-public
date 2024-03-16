@@ -42,4 +42,8 @@ public class OrderInfoService {
     public ResponseResult<OrderInfo> currentOrder(String phone , String identity){
         return serviceOrderClient.current(phone,identity);
     }
+
+    public ResponseResult book(OrderRequest orderRequest){
+        return serviceOrderClient.book(orderRequest);
+    }
 }

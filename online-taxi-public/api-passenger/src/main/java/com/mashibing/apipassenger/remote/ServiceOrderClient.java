@@ -12,6 +12,8 @@ public interface ServiceOrderClient {
     @PostMapping("/order/add")
     ResponseResult add(@RequestBody OrderRequest orderRequest);
 
+    @RequestMapping(method = RequestMethod.POST, value = "/order/book")
+    public ResponseResult book(@RequestBody OrderRequest orderRequest);
 
     @GetMapping("/order/test-dispatch-real-time-order")
     String dispatchRealTimeOrder(@RequestParam Long orderId);

@@ -23,12 +23,23 @@ public class OrderInfoController {
 
     @Autowired
     private OrderInfoService orderInfoService;
-
+    /**
+     * 创建订单/下单
+     * @return
+     */
     @PostMapping("/add")
     public ResponseResult add(@Validated @RequestBody OrderRequest orderRequest){
         return orderInfoService.add(orderRequest);
     }
 
+    /**
+     * 乘客创建预约单
+     * @return
+     */
+    @PostMapping("/book")
+    public ResponseResult book(@Validated @RequestBody OrderRequest orderRequest){
+        return orderInfoService.book(orderRequest);
+    }
 
     /**
      * 取消订单

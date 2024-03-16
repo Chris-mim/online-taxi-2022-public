@@ -34,6 +34,18 @@ public class OrderInfoController {
     }
 
     /**
+     * 创建预约单
+     * @param orderRequest
+     * @return
+     */
+    @PostMapping("/book")
+    public ResponseResult book(@RequestBody OrderRequest orderRequest , HttpServletRequest httpServletRequest){
+
+        log.info("service-order"+orderRequest.getAddress());
+        return orderInfoService.book(orderRequest);
+    }
+
+    /**
      * 订单详情
      * @param orderId
      * @return

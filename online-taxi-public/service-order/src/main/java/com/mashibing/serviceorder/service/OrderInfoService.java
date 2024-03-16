@@ -620,4 +620,174 @@ public class OrderInfoService {
         OrderInfo orderInfo = orderInfoMapper.selectOne(queryWrapper);
         return ResponseResult.success(orderInfo);
     }
+
+
+    /**
+     * 新建订单
+     * @param orderRequest
+     * @return
+     */
+    public ResponseResult book(OrderRequest orderRequest) {
+
+//        // 测试当前城市是否有可用的司机
+//        ResponseResult<Boolean> availableDriver = serviceDriverUserClient.isAvailableDriver(orderRequest.getAddress());
+//        log.info("测试城市是否有司机结果："+availableDriver.getData());
+//        if (!availableDriver.getData()){
+//            return ResponseResult.fail(CommonStatusEnum.CITY_DRIVER_EMPTY.getCode(),CommonStatusEnum.CITY_DRIVER_EMPTY.getValue());
+//        }
+
+//        // 需要判断计价规则的版本是否为最新
+//        PriceRuleIsNewRequest priceRuleIsNewRequest = new PriceRuleIsNewRequest();
+//        priceRuleIsNewRequest.setFareType(orderRequest.getFareType());
+//        priceRuleIsNewRequest.setFareVersion(orderRequest.getFareVersion());
+//        ResponseResult<Boolean> aNew = servicePriceClient.isNew(priceRuleIsNewRequest);
+//        if (!(aNew.getData())){
+//            return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_CHANGED.getCode(),CommonStatusEnum.PRICE_RULE_CHANGED.getValue());
+//        }
+
+        // 需要判断 下单的设备是否是 黑名单设备
+//        if (isBlackDevice(orderRequest)) {
+//            return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK.getCode(), CommonStatusEnum.DEVICE_IS_BLACK.getValue());
+//        }
+
+//        // 判断：下单的城市和计价规则是否正常
+//        if(!isPriceRuleExists(orderRequest)){
+//            return ResponseResult.fail(CommonStatusEnum.CITY_SERVICE_NOT_SERVICE.getCode(),CommonStatusEnum.CITY_SERVICE_NOT_SERVICE.getValue());
+//        }
+
+
+//        // 判断乘客 是否有进行中的订单
+//        if (isPassengerOrderGoingon(orderRequest.getPassengerId()) > 0){
+//            return ResponseResult.fail(CommonStatusEnum.ORDER_GOING_ON.getCode(),CommonStatusEnum.ORDER_GOING_ON.getValue());
+//        }
+
+        // 创建订单
+        OrderInfo orderInfo = new OrderInfo();
+
+        BeanUtils.copyProperties(orderRequest,orderInfo);
+
+        orderInfo.setOrderStatus(OrderConstants.ORDER_START);
+
+        LocalDateTime now = LocalDateTime.now();
+        orderInfo.setGmtCreate(now);
+        orderInfo.setGmtModified(now);
+
+        orderInfoMapper.insert(orderInfo);
+
+        // 定时任务的处理
+        for (int i =0;i<6;i++){
+            // 派单 dispatchRealTimeOrder
+            int result = dispatchBookOrder(orderInfo);
+            if (result == 1){
+                break;
+            }
+
+            // 等待20s
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return ResponseResult.success();
+    }
+
+    /**
+     * 预约订单-分发订单
+     * 如果返回1：派单成功
+     * @param orderInfo
+     */
+    public int dispatchBookOrder(OrderInfo orderInfo){
+        log.info("循环一次");
+        int result = 0;
+
+        //2km
+        String depLatitude = orderInfo.getDepLatitude();
+        String depLongitude = orderInfo.getDepLongitude();
+
+        String center = depLatitude+","+depLongitude;
+
+        List<Integer> radiusList = new ArrayList<>();
+        radiusList.add(2000);
+        radiusList.add(4000);
+        radiusList.add(5000);
+        // 搜索结果
+        ResponseResult<List<TerminalResponse>> listResponseResult = null;
+        // goto是为了测试。
+        radius:
+        for (int i=0;i<radiusList.size();i++){
+            Integer radius = radiusList.get(i);
+            listResponseResult = serviceMapClient.aroundSearch(center,radius );
+
+            log.info("在半径为"+radius+"的范围内，寻找车辆,结果："+ JSONArray.fromObject(listResponseResult.getData()).toString());
+
+            // 获得终端  [{"carId":1578641048288702465,"tid":"584169988"}]
+
+            // 解析终端
+            List<TerminalResponse> data = listResponseResult.getData();
+
+            // 为了测试是否从地图上获取到司机
+//            List<TerminalResponse> data = new ArrayList<>();
+            for (int j=0;j<data.size();j++){
+                TerminalResponse terminalResponse = data.get(j);
+                Long carId = terminalResponse.getCarId();
+
+                String longitude = terminalResponse.getLongitude();
+                String latitude = terminalResponse.getLatitude();
+
+                // 查询是否有对应的可派单司机
+                ResponseResult<OrderDriverResponse> availableDriver = serviceDriverUserClient.getAvailableDriver(carId);
+                if(availableDriver.getCode() == CommonStatusEnum.AVAILABLE_DRIVER_EMPTY.getCode()){
+                    log.info("没有车辆ID："+carId+",对于的司机");
+                    continue;
+                }else {
+                    log.info("车辆ID："+carId+"找到了正在出车的司机");
+
+                    OrderDriverResponse orderDriverResponse = availableDriver.getData();
+                    Long driverId = orderDriverResponse.getDriverId();
+                    String driverPhone = orderDriverResponse.getDriverPhone();
+                    String licenseId = orderDriverResponse.getLicenseId();
+                    String vehicleNo = orderDriverResponse.getVehicleNo();
+                    String vehicleTypeFromCar = orderDriverResponse.getVehicleType();
+
+                    // 判断车辆的车型是否符合？
+                    String vehicleType = orderInfo.getVehicleType();
+                    if (!vehicleType.trim().equals(vehicleTypeFromCar.trim())){
+                        System.out.println("车型不符合");
+                        continue ;
+                    }
+
+                    // 通知司机
+                    JSONObject driverContent = new  JSONObject();
+
+                    driverContent.put("orderId",orderInfo.getId());
+                    driverContent.put("passengerId",orderInfo.getPassengerId());
+                    driverContent.put("passengerPhone",orderInfo.getPassengerPhone());
+                    driverContent.put("departure",orderInfo.getDeparture());
+                    driverContent.put("depLongitude",orderInfo.getDepLongitude());
+                    driverContent.put("depLatitude",orderInfo.getDepLatitude());
+
+                    driverContent.put("destination",orderInfo.getDestination());
+                    driverContent.put("destLongitude",orderInfo.getDestLongitude());
+                    driverContent.put("destLatitude",orderInfo.getDestLatitude());
+
+                    PushRequest pushRequest = new PushRequest();
+                    pushRequest.setUserId(driverId);
+                    pushRequest.setIdentity(IdentityConstants.DRIVER_IDENTITY);
+                    pushRequest.setContent(driverContent.toString());
+
+                    serviceSsePushClient.push(pushRequest);
+
+                    // 退出，不在进行 司机的查找.如果派单成功，则退出循环
+                    break radius;
+                }
+
+            }
+
+        }
+
+        return  result;
+
+    }
 }
