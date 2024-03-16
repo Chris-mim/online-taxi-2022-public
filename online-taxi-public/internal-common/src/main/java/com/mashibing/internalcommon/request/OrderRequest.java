@@ -96,4 +96,13 @@ public class OrderRequest {
      */
     private String vehicleType;
 
+    /**
+     * 接单时车辆经度
+     */
+    private String receiveOrderCarLongitude;
+
+    /**
+     * 接单时车辆纬度
+     */
+    private String receiveOrderCarLatitude;
 }

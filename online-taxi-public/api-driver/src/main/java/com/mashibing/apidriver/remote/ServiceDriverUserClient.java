@@ -2,6 +2,7 @@ package com.mashibing.apidriver.remote;
 
 import com.mashibing.internalcommon.dto.*;
 import com.mashibing.internalcommon.response.DriverUserExistsResponse;
+import com.mashibing.internalcommon.response.OrderDriverResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,4 +26,7 @@ public interface ServiceDriverUserClient {
 
     @GetMapping("/work-status")
     public ResponseResult<DriverUserWorkStatus> getWorkStatus(@RequestParam Long driverId);
+
+    @GetMapping("/get-available-driver/{carId}")
+    public ResponseResult<OrderDriverResponse> getAvailableDriver(@PathVariable("carId") Long carId);
 }

@@ -53,6 +53,8 @@ public enum CommonStatusEnum {
 
     AVAILABLE_DRIVER_EMPTY(1506,"可用的司机为空"),
 
+    CAR_NOT_EXISTS(1507,"车辆不存在"),
+
     /**
      * 订单：1600-1699
      */

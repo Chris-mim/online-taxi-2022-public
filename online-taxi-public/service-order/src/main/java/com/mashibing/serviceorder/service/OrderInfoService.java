@@ -8,6 +8,7 @@ import com.mashibing.internalcommon.dto.Car;
 import com.mashibing.internalcommon.dto.PriceRule;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
+import com.mashibing.internalcommon.request.DriverGrabRequest;
 import com.mashibing.internalcommon.request.OrderRequest;
 import com.mashibing.internalcommon.request.PriceDTO;
 import com.mashibing.internalcommon.request.PushRequest;
@@ -796,6 +797,46 @@ public class OrderInfoService {
         }
 
         return  result;
+
+    }
+
+    /**
+     * 司机抢单
+     * @param driverGrabRequest
+     * @return
+     */
+    public ResponseResult grab(DriverGrabRequest driverGrabRequest){
+
+        Long orderId = driverGrabRequest.getOrderId();
+        OrderInfo orderInfo =  orderInfoMapper.selectById(orderId);
+
+        Long driverId = driverGrabRequest.getDriverId();
+        Long carId = driverGrabRequest.getCarId();
+        String licenseId = driverGrabRequest.getLicenseId();
+        String vehicleNo = driverGrabRequest.getVehicleNo();
+        String receiveOrderCarLatitude = driverGrabRequest.getReceiveOrderCarLatitude();
+        String receiveOrderCarLongitude = driverGrabRequest.getReceiveOrderCarLongitude();
+        String vehicleType = driverGrabRequest.getVehicleType();
+        String driverPhone = driverGrabRequest.getDriverPhone();
+
+        orderInfo.setDriverId(driverId);
+        orderInfo.setDriverPhone(driverPhone);
+        orderInfo.setCarId(carId);
+
+        orderInfo.setReceiveOrderCarLongitude(receiveOrderCarLongitude);
+        orderInfo.setReceiveOrderCarLatitude(receiveOrderCarLatitude);
+        orderInfo.setReceiveOrderTime(LocalDateTime.now());
+
+        orderInfo.setLicenseId(licenseId);
+        orderInfo.setVehicleNo(vehicleNo);
+
+        orderInfo.setVehicleType(vehicleType);
+
+        orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
+
+        orderInfoMapper.updateById(orderInfo);
+
+        return  ResponseResult.success();
 
     }
 }

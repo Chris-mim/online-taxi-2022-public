@@ -2,6 +2,7 @@ package com.mashibing.apidriver.remote;
 
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
+import com.mashibing.internalcommon.request.DriverGrabRequest;
 import com.mashibing.internalcommon.request.OrderRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -58,4 +59,7 @@ public interface ServiceOrderClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/order/current")
     ResponseResult current(@RequestParam String phone ,@RequestParam String identity);
+
+    @PostMapping(value = "/order/grab"  )
+    public ResponseResult driverGrab(@RequestBody DriverGrabRequest driverGrabRequest);
 }
