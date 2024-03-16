@@ -1,8 +1,10 @@
 package com.mashibing.serviceorder.controller;
 
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.dto.TokenResult;
 import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.OrderRequest;
+import com.mashibing.internalcommon.util.JwtUtils;
 import com.mashibing.serviceorder.mapper.OrderInfoMapper;
 import com.mashibing.serviceorder.service.OrderInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +45,26 @@ public class OrderInfoController {
 
         log.info("service-order"+orderRequest.getAddress());
         return orderInfoService.book(orderRequest);
+    }
+
+    /**
+     * 司机抢单
+     * @param order
+     * @param httpServletRequest
+     * @return
+     */
+    @PostMapping("/grab")
+    public ResponseResult grab(@RequestBody OrderRequest order, HttpServletRequest httpServletRequest){
+        String token = httpServletRequest.getHeader("Authorization");
+        // 从token中获取司机信息
+        TokenResult tokenResult = JwtUtils.parseToken(token);
+        String identity = tokenResult.getIdentity();
+        String phone = tokenResult.getPhone();
+
+        Long orderId = order.getOrderId();
+
+
+        return ResponseResult.success();
     }
 
     /**
