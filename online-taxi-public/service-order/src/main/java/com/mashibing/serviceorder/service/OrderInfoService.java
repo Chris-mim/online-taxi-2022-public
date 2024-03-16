@@ -725,7 +725,15 @@ public class OrderInfoService {
             // 获得终端  [{"carId":1578641048288702465,"tid":"584169988"}]
 
             // 解析终端
-            List<TerminalResponse> data = listResponseResult.getData();
+//            List<TerminalResponse> data = listResponseResult.getData();
+            // 测试：为了测试是否从地图上获取到司机
+            TerminalResponse testTerminal = new TerminalResponse();
+            testTerminal.setCarId(3l);
+            testTerminal.setTid("850548522");
+            testTerminal.setLatitude("39.89");
+            testTerminal.setLongitude("116.32");
+            List<TerminalResponse> data = new ArrayList<>();
+            data.add(testTerminal);
 
             // 为了测试是否从地图上获取到司机
 //            List<TerminalResponse> data = new ArrayList<>();
@@ -780,7 +788,7 @@ public class OrderInfoService {
                     serviceSsePushClient.push(pushRequest);
 
                     // 退出，不在进行 司机的查找.如果派单成功，则退出循环
-                    break radius;
+                    return 1;
                 }
 
             }
