@@ -68,7 +68,9 @@ public enum CommonStatusEnum {
     CITY_SERVICE_NOT_SERVICE(1602,"当前城市不提供叫车服务"),
 
     ORDER_CANCEL_ERROR(1603, "订单取消失败"),
+    ORDER_NOT_EXISTS(1604,"订单不存在"),
 
+    ORDER_CAN_NOT_GRAB(1605 , "订单不能被抢"),
     /**
      * 统一验证提示 1700-1799
      */

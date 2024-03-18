@@ -806,10 +806,26 @@ public class OrderInfoService {
      * @return
      */
     public ResponseResult grab(DriverGrabRequest driverGrabRequest){
+        System.out.println("请求来了："+driverGrabRequest.getDriverId());
 
         Long orderId = driverGrabRequest.getOrderId();
         OrderInfo orderInfo =  orderInfoMapper.selectById(orderId);
+        // 订单不存在报错
+        if (orderInfo == null){
+            return ResponseResult.fail(CommonStatusEnum.ORDER_NOT_EXISTS.getCode(),CommonStatusEnum.ORDER_NOT_EXISTS.getValue());
+        }
 
+        int orderStatus = orderInfo.getOrderStatus();
+        // 订单状态不为草稿，已经被其他人抢了，报错
+        if (orderStatus != OrderConstants.ORDER_START){
+            return ResponseResult.fail(CommonStatusEnum.ORDER_CAN_NOT_GRAB.getCode(), CommonStatusEnum.ORDER_CAN_NOT_GRAB.getValue());
+        }
+        // 为了测试，休眠10毫秒
+        try {
+            TimeUnit.MICROSECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Long driverId = driverGrabRequest.getDriverId();
         Long carId = driverGrabRequest.getCarId();
         String licenseId = driverGrabRequest.getLicenseId();

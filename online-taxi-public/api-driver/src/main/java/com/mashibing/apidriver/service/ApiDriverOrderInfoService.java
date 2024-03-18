@@ -93,8 +93,7 @@ public class ApiDriverOrderInfoService {
         driverGrabRequest.setReceiveOrderCarLongitude(receiveOrderCarLongitude);
         System.out.println(JSONObject.fromObject(driverGrabRequest));
 
-        serviceOrderClient.driverGrab(driverGrabRequest);
 
-        return ResponseResult.success();
+        return serviceOrderClient.driverGrab(driverGrabRequest);
     }
 }
