@@ -805,52 +805,60 @@ public class OrderInfoService {
      * @param driverGrabRequest
      * @return
      */
-    public synchronized ResponseResult grab(DriverGrabRequest driverGrabRequest){
+    public  ResponseResult grab(DriverGrabRequest driverGrabRequest){
         System.out.println("请求来了："+driverGrabRequest.getDriverId());
 
         Long orderId = driverGrabRequest.getOrderId();
-        OrderInfo orderInfo =  orderInfoMapper.selectById(orderId);
-        // 订单不存在报错
-        if (orderInfo == null){
-            return ResponseResult.fail(CommonStatusEnum.ORDER_NOT_EXISTS.getCode(),CommonStatusEnum.ORDER_NOT_EXISTS.getValue());
+        // 不能直接锁orderId，如果数字在 -128 （包含）到127（包含）之间，是从数字缓冲池中拿的，是同一个对象，如果在这之外，是重新new一个对象的，synchronized是锁不住的。
+
+        // 单机锁司机ID小技巧:如果driverId在常量池内没有，则放入常量池 如果driverId字符串在常量池有则返回常量池里的地址，这里就锁住了同一个地址
+
+        String orderIdStr = (orderId+"").intern();
+
+        synchronized(orderIdStr) {
+            OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
+            // 订单不存在报错
+            if (orderInfo == null) {
+                return ResponseResult.fail(CommonStatusEnum.ORDER_NOT_EXISTS.getCode(), CommonStatusEnum.ORDER_NOT_EXISTS.getValue());
+            }
+
+            int orderStatus = orderInfo.getOrderStatus();
+            // 订单状态不为草稿，已经被其他人抢了，报错
+            if (orderStatus != OrderConstants.ORDER_START) {
+                return ResponseResult.fail(CommonStatusEnum.ORDER_CAN_NOT_GRAB.getCode(), CommonStatusEnum.ORDER_CAN_NOT_GRAB.getValue());
+            }
+            // 为了测试，休眠10毫秒
+            try {
+                TimeUnit.MICROSECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Long driverId = driverGrabRequest.getDriverId();
+            Long carId = driverGrabRequest.getCarId();
+            String licenseId = driverGrabRequest.getLicenseId();
+            String vehicleNo = driverGrabRequest.getVehicleNo();
+            String receiveOrderCarLatitude = driverGrabRequest.getReceiveOrderCarLatitude();
+            String receiveOrderCarLongitude = driverGrabRequest.getReceiveOrderCarLongitude();
+            String vehicleType = driverGrabRequest.getVehicleType();
+            String driverPhone = driverGrabRequest.getDriverPhone();
+
+            orderInfo.setDriverId(driverId);
+            orderInfo.setDriverPhone(driverPhone);
+            orderInfo.setCarId(carId);
+
+            orderInfo.setReceiveOrderCarLongitude(receiveOrderCarLongitude);
+            orderInfo.setReceiveOrderCarLatitude(receiveOrderCarLatitude);
+            orderInfo.setReceiveOrderTime(LocalDateTime.now());
+
+            orderInfo.setLicenseId(licenseId);
+            orderInfo.setVehicleNo(vehicleNo);
+
+            orderInfo.setVehicleType(vehicleType);
+
+            orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
+
+            orderInfoMapper.updateById(orderInfo);
         }
-
-        int orderStatus = orderInfo.getOrderStatus();
-        // 订单状态不为草稿，已经被其他人抢了，报错
-        if (orderStatus != OrderConstants.ORDER_START){
-            return ResponseResult.fail(CommonStatusEnum.ORDER_CAN_NOT_GRAB.getCode(), CommonStatusEnum.ORDER_CAN_NOT_GRAB.getValue());
-        }
-        // 为了测试，休眠10毫秒
-        try {
-            TimeUnit.MICROSECONDS.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Long driverId = driverGrabRequest.getDriverId();
-        Long carId = driverGrabRequest.getCarId();
-        String licenseId = driverGrabRequest.getLicenseId();
-        String vehicleNo = driverGrabRequest.getVehicleNo();
-        String receiveOrderCarLatitude = driverGrabRequest.getReceiveOrderCarLatitude();
-        String receiveOrderCarLongitude = driverGrabRequest.getReceiveOrderCarLongitude();
-        String vehicleType = driverGrabRequest.getVehicleType();
-        String driverPhone = driverGrabRequest.getDriverPhone();
-
-        orderInfo.setDriverId(driverId);
-        orderInfo.setDriverPhone(driverPhone);
-        orderInfo.setCarId(carId);
-
-        orderInfo.setReceiveOrderCarLongitude(receiveOrderCarLongitude);
-        orderInfo.setReceiveOrderCarLatitude(receiveOrderCarLatitude);
-        orderInfo.setReceiveOrderTime(LocalDateTime.now());
-
-        orderInfo.setLicenseId(licenseId);
-        orderInfo.setVehicleNo(vehicleNo);
-
-        orderInfo.setVehicleType(vehicleType);
-
-        orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
-
-        orderInfoMapper.updateById(orderInfo);
 
         return  ResponseResult.success();
 
