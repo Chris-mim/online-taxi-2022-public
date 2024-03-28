@@ -5,9 +5,11 @@ import com.mashibing.internalcommon.entity.OrderInfo;
 import com.mashibing.internalcommon.request.DriverGrabRequest;
 import com.mashibing.internalcommon.request.OrderRequest;
 import com.mashibing.serviceorder.mapper.OrderInfoMapper;
+import com.mashibing.serviceorder.service.GrabService;
 import com.mashibing.serviceorder.service.OrderInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +47,10 @@ public class OrderInfoController {
         log.info("service-order"+orderRequest.getAddress());
         return orderInfoService.book(orderRequest);
     }
+    @Autowired
+//    @Qualifier("grabBySingleRedisService")
+    @Qualifier("grabByMultiRedisService")
+    private GrabService grabService;
 
     /**
      * 司机抢单
@@ -54,7 +60,7 @@ public class OrderInfoController {
     @PostMapping("/grab")
     public ResponseResult driverGrab(@RequestBody DriverGrabRequest driverGrabRequest){
 
-        return orderInfoService.grab(driverGrabRequest);
+        return grabService.grab(driverGrabRequest);
 
     }
 
