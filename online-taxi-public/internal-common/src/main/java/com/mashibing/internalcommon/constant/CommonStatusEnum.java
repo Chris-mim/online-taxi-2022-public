@@ -71,6 +71,8 @@ public enum CommonStatusEnum {
     ORDER_NOT_EXISTS(1604,"订单不存在"),
 
     ORDER_CAN_NOT_GRAB(1605 , "订单不能被抢"),
+
+    ORDER_GRABING(1606,"订单正在被抢"),
     /**
      * 统一验证提示 1700-1799
      */

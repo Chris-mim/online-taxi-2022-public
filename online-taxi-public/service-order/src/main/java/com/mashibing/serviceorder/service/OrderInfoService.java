@@ -815,50 +815,50 @@ public class OrderInfoService {
 
         String orderIdStr = (orderId+"").intern();
 
-        synchronized(orderIdStr) {
-            OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
-            // 订单不存在报错
-            if (orderInfo == null) {
-                return ResponseResult.fail(CommonStatusEnum.ORDER_NOT_EXISTS.getCode(), CommonStatusEnum.ORDER_NOT_EXISTS.getValue());
-            }
-
-            int orderStatus = orderInfo.getOrderStatus();
-            // 订单状态不为草稿，已经被其他人抢了，报错
-            if (orderStatus != OrderConstants.ORDER_START) {
-                return ResponseResult.fail(CommonStatusEnum.ORDER_CAN_NOT_GRAB.getCode(), CommonStatusEnum.ORDER_CAN_NOT_GRAB.getValue());
-            }
-            // 为了测试，休眠10毫秒
-            try {
-                TimeUnit.MICROSECONDS.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Long driverId = driverGrabRequest.getDriverId();
-            Long carId = driverGrabRequest.getCarId();
-            String licenseId = driverGrabRequest.getLicenseId();
-            String vehicleNo = driverGrabRequest.getVehicleNo();
-            String receiveOrderCarLatitude = driverGrabRequest.getReceiveOrderCarLatitude();
-            String receiveOrderCarLongitude = driverGrabRequest.getReceiveOrderCarLongitude();
-            String vehicleType = driverGrabRequest.getVehicleType();
-            String driverPhone = driverGrabRequest.getDriverPhone();
-
-            orderInfo.setDriverId(driverId);
-            orderInfo.setDriverPhone(driverPhone);
-            orderInfo.setCarId(carId);
-
-            orderInfo.setReceiveOrderCarLongitude(receiveOrderCarLongitude);
-            orderInfo.setReceiveOrderCarLatitude(receiveOrderCarLatitude);
-            orderInfo.setReceiveOrderTime(LocalDateTime.now());
-
-            orderInfo.setLicenseId(licenseId);
-            orderInfo.setVehicleNo(vehicleNo);
-
-            orderInfo.setVehicleType(vehicleType);
-
-            orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
-
-            orderInfoMapper.updateById(orderInfo);
+//        synchronized(orderIdStr) {
+        OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
+        // 订单不存在报错
+        if (orderInfo == null) {
+            return ResponseResult.fail(CommonStatusEnum.ORDER_NOT_EXISTS.getCode(), CommonStatusEnum.ORDER_NOT_EXISTS.getValue());
         }
+
+        int orderStatus = orderInfo.getOrderStatus();
+        // 订单状态不为草稿，已经被其他人抢了，报错
+        if (orderStatus != OrderConstants.ORDER_START) {
+            return ResponseResult.fail(CommonStatusEnum.ORDER_CAN_NOT_GRAB.getCode(), CommonStatusEnum.ORDER_CAN_NOT_GRAB.getValue());
+        }
+        // 为了测试，休眠10毫秒
+        try {
+            TimeUnit.MICROSECONDS.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Long driverId = driverGrabRequest.getDriverId();
+        Long carId = driverGrabRequest.getCarId();
+        String licenseId = driverGrabRequest.getLicenseId();
+        String vehicleNo = driverGrabRequest.getVehicleNo();
+        String receiveOrderCarLatitude = driverGrabRequest.getReceiveOrderCarLatitude();
+        String receiveOrderCarLongitude = driverGrabRequest.getReceiveOrderCarLongitude();
+        String vehicleType = driverGrabRequest.getVehicleType();
+        String driverPhone = driverGrabRequest.getDriverPhone();
+
+        orderInfo.setDriverId(driverId);
+        orderInfo.setDriverPhone(driverPhone);
+        orderInfo.setCarId(carId);
+
+        orderInfo.setReceiveOrderCarLongitude(receiveOrderCarLongitude);
+        orderInfo.setReceiveOrderCarLatitude(receiveOrderCarLatitude);
+        orderInfo.setReceiveOrderTime(LocalDateTime.now());
+
+        orderInfo.setLicenseId(licenseId);
+        orderInfo.setVehicleNo(vehicleNo);
+
+        orderInfo.setVehicleType(vehicleType);
+
+        orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
+
+        orderInfoMapper.updateById(orderInfo);
+//        }
 
         return  ResponseResult.success();
 
