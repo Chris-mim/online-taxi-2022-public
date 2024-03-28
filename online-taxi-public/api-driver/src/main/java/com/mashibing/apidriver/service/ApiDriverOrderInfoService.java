@@ -60,7 +60,7 @@ public class ApiDriverOrderInfoService {
     public ResponseResult grap(String driverPhone , Long orderId , String receiveOrderCarLongitude, String receiveOrderCarLatitude){
         // 根据 司机的电话，查询车辆信息
         ResponseResult<DriverCarBindingRelationship> driverCarRelationShipResponseResult = serviceDriverUserClient.getDriverCarRelationShip(driverPhone);
-
+        // 司机和车辆绑定关系不存在
         if (driverCarRelationShipResponseResult == null){
             return ResponseResult.fail(CommonStatusEnum.DRIVER_CAR_BIND_NOT_EXISTS.getCode(),CommonStatusEnum.DRIVER_CAR_BIND_EXISTS.getValue());
         }
@@ -68,6 +68,7 @@ public class ApiDriverOrderInfoService {
         Long carId = driverCarBindingRelationship.getCarId();
 
         ResponseResult<OrderDriverResponse> availableDriverResponseResult = serviceDriverUserClient.getAvailableDriver(carId);
+        // 车辆不存在
         if (availableDriverResponseResult == null){
             return ResponseResult.fail(CommonStatusEnum.CAR_NOT_EXISTS.getCode(),CommonStatusEnum.CAR_NOT_EXISTS.getValue());
         }
