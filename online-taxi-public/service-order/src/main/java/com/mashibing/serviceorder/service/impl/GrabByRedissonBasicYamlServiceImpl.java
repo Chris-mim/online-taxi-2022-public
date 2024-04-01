@@ -10,14 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-@Service("grabByRedissonBasicService")
-public class GrabByRedissonBasicServiceImpl implements GrabService {
+@Service("grabByRedissonBasicYamlService")
+public class GrabByRedissonBasicYamlServiceImpl implements GrabService {
 
     @Autowired
     OrderInfoService orderInfoService;
 
     @Autowired
-    @Qualifier("redissonBootYml")
+    @Qualifier("redissonYamlClient")
     RedissonClient redissonClient;
 
     @Override
@@ -30,7 +30,7 @@ public class GrabByRedissonBasicServiceImpl implements GrabService {
         RLock lock = redissonClient.getLock(key);
         lock.lock();
 
-        System.out.println("开始锁redis redisson basic");
+        System.out.println("开始锁redis redisson basic yaml");
 //        try {
 //            TimeUnit.SECONDS.sleep(40);
 //        } catch (InterruptedException e) {
@@ -38,7 +38,7 @@ public class GrabByRedissonBasicServiceImpl implements GrabService {
 //        }
 
         ResponseResult grab = orderInfoService.grab(driverGrabRequest);
-        System.out.println("结束锁redis redisson basic");
+        System.out.println("结束锁redis redisson basic yaml");
         lock.unlock();
 
         return grab;
