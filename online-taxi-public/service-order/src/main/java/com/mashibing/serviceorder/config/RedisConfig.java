@@ -39,4 +39,15 @@ public class RedisConfig {
 
         return Redisson.create(config);
     }
+    @Bean("redissonMasterSlaveClient")
+    public RedissonClient redissonMasterSlaveClient(){
+        Config config = null;
+        try {
+            config = Config.fromYAML(new ClassPathResource("/redisson-config/master-slave-server.yaml").getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Redisson.create(config);
+    }
 }
