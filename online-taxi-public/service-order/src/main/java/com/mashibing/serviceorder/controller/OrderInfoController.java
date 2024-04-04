@@ -49,7 +49,7 @@ public class OrderInfoController {
     }
     @Autowired
 //    @Qualifier("grabBySingleRedisService")
-    @Qualifier("grabByRedissonMasterSlaveYamlService")
+    @Qualifier("grabByRedissonSentinelYamlService")
     private GrabService grabService;
 
     /**
