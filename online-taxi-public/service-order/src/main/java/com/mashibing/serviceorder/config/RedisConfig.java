@@ -30,38 +30,54 @@ public class RedisConfig {
 
     @Bean("redissonYamlClient")
     public RedissonClient redissonYamlClient(){
-        Config config = null;
-        try {
-            config = Config.fromYAML(new ClassPathResource("/redisson-config/single-server.yaml").getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return Redisson.create(config);
+//        Config config = null;
+//        try {
+//            config = Config.fromYAML(new ClassPathResource("/redisson-config/single-server.yaml").getInputStream());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return Redisson.create(config);
+        // 便于测试
+        return Redisson.create();
     }
     @Bean("redissonMasterSlaveClient")
     public RedissonClient redissonMasterSlaveClient(){
-        Config config = null;
-        try {
-            config = Config.fromYAML(new ClassPathResource("/redisson-config/master-slave-server.yaml").getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return Redisson.create(config);
+//        Config config = null;
+//        try {
+//            config = Config.fromYAML(new ClassPathResource("/redisson-config/master-slave-server.yaml").getInputStream());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return Redisson.create(config);
+        // 便于测试
+        return Redisson.create();
     }
 
     @Bean("redissonSentinelClient")
     public RedissonClient redissonSentinelClient(){
+//        Config config = null;
+//        try {
+//            config = Config.fromYAML(new ClassPathResource("/redisson-config/sentinel.yaml").getInputStream());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        return Redisson.create(config);
+        // 便于测试
+        return Redisson.create();
+    }
+
+    @Bean("redissonClusterClient")
+    public RedissonClient redissonClusterClient(){
         Config config = null;
         try {
-            config = Config.fromYAML(new ClassPathResource("/redisson-config/sentinel.yaml").getInputStream());
+            config = Config.fromYAML(new ClassPathResource("/redisson-config/cluster.yaml").getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return Redisson.create(config);
-
     }
 }
