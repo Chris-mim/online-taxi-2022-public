@@ -48,8 +48,7 @@ public class OrderInfoController {
         return orderInfoService.book(orderRequest);
     }
     @Autowired
-//    @Qualifier("grabBySingleRedisService")
-    @Qualifier("grabByRedissonClusterYamlService")
+    @Qualifier("grabByRedissonBasicService")
     private GrabService grabService;
 
     /**
