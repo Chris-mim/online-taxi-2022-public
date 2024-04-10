@@ -48,7 +48,7 @@ public class OrderInfoController {
         return orderInfoService.book(orderRequest);
     }
     @Autowired
-    @Qualifier("grabByRedissonBasicService")
+    @Qualifier("grabByZookeeperDiyService")
     private GrabService grabService;
 
     /**

@@ -28,6 +28,10 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
+
+zookeeper:
+  address: localhost:2181
+  timeout: 100000
 ---
 
 spring:
